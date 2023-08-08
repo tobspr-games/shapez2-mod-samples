@@ -10,7 +10,7 @@ public class RainbowStarsMod : IMod
 {
     public void Init()
     {
-        ShapezCallbackExt.OnGameStart += OnGameStart;
+        ShapezCallbackExt.OnPostGameStart += OnGameStart;
     }
 
     private static void OnGameStart()

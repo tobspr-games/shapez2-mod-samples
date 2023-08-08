@@ -3,18 +3,15 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <Nullable>disable</Nullable>
+    <BaseOutputPath>bin\</BaseOutputPath>
     <RunPostBuildEvent>Always</RunPostBuildEvent>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DebugType>embedded</DebugType>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DebugType>embedded</DebugType>
-  </PropertyGroup>
-
   <ItemGroup>
+    <Reference Include="0Harmony">
+      <HintPath>$(SPZ2_PATH)\Patchers\Dependencies\0Harmony.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="ShapezShifter">
       <HintPath>$(SPZ2_PATH)\Patchers\ShapezShifter.dll</HintPath>
       <Private>False</Private>

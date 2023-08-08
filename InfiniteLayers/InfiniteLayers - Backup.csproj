@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <Nullable>disable</Nullable>
+    <BaseOutputPath>bin</BaseOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="0Harmony">
+      <HintPath>C:\Users\Lorenzo\Desktop\ShapezBuilds\spz2_alpha_7.3\Patchers\Dependencies\0Harmony.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ShapezShifter">
+      <HintPath>C:\Users\Lorenzo\Desktop\ShapezBuilds\spz2_alpha_7.3\Patchers\ShapezShifter.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="SPZGameAssembly">
+      <HintPath>C:\Users\Lorenzo\Desktop\ShapezBuilds\spz2_alpha_7.3\shapez 2_Data\Managed\SPZGameAssembly.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>C:\Users\Lorenzo\Desktop\ShapezBuilds\spz2_alpha_7.3\shapez 2_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+
+</Project>
