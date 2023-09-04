@@ -7,7 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RainbowStars", "RainbowStar
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InfiniteLayers", "InfiniteLayers\InfiniteLayers.csproj", "{10E1656D-CFBA-4CE8-AFF2-6667CE0B68EF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InfiniteIslands", "InfiniteIslands\InfiniteIslands.csproj", "{8C7B197C-F5EE-45D3-870F-5FE9DC603FF9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InfiniteIslands", "InfiniteIslands\InfiniteIslands.csproj", "{8C7B197C-F5EE-45D3-870F-5FE9DC603FF9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PortalBuilding", "PortalBuilding\PortalBuilding.csproj", "{AB59B58A-561B-4532-BB6D-DD9A7FBD0828}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusyDeveloper", "BusyDeveloper\BusyDeveloper.csproj", "{F206D72F-068F-4EF0-89D8-3EC1C54F2C40}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +31,14 @@ Global
 		{8C7B197C-F5EE-45D3-870F-5FE9DC603FF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8C7B197C-F5EE-45D3-870F-5FE9DC603FF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8C7B197C-F5EE-45D3-870F-5FE9DC603FF9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB59B58A-561B-4532-BB6D-DD9A7FBD0828}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB59B58A-561B-4532-BB6D-DD9A7FBD0828}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB59B58A-561B-4532-BB6D-DD9A7FBD0828}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB59B58A-561B-4532-BB6D-DD9A7FBD0828}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F206D72F-068F-4EF0-89D8-3EC1C54F2C40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F206D72F-068F-4EF0-89D8-3EC1C54F2C40}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F206D72F-068F-4EF0-89D8-3EC1C54F2C40}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F206D72F-068F-4EF0-89D8-3EC1C54F2C40}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
