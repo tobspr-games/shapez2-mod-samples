@@ -6,31 +6,23 @@
     <RunPostBuildEvent>Always</RunPostBuildEvent>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DebugType>embedded</DebugType>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DebugType>embedded</DebugType>
-  </PropertyGroup>
-
   <ItemGroup>
     <Reference Include="ShapezShifter">
-      <HintPath>$(SPZ2_PATH)\Patchers\ShapezShifter.dll</HintPath>
+      <HintPath>$(USERPROFILE)\AppData\LocalLow\tobspr Games\shapez 2\patchers\ShapezShifter.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="SPZGameAssembly">
-      <HintPath>$(SPZ2_PATH)\shapez 2_Data\Managed\SPZGameAssembly.dll</HintPath>
+      <HintPath>$(SPZ2_PATH)\SPZGameAssembly.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>$(SPZ2_PATH)\shapez 2_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>$(SPZ2_PATH)\UnityEngine.CoreModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy &quot;$(TargetDir)&quot; &quot;$(USERPROFILE)\AppData\LocalLow\tobspr Games\shapez 2\mods&quot; /Y /I" />
+    <Exec Command="xcopy &quot;$(TargetDir)&quot; &quot;$(USERPROFILE)\AppData\LocalLow\tobspr Games\shapez 2\mods\RainbowStars\ &quot; /Y /I" />
   </Target>
 
 </Project>

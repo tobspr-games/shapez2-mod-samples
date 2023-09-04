@@ -8,7 +8,7 @@ using Object = UnityEngine.Object;
 /// </summary>
 public class RainbowStarsMod : IMod
 {
-    public void Init()
+    public void Init(string path)
     {
         ShapezCallbackExt.OnPostGameStart += OnGameStart;
     }
@@ -25,7 +25,7 @@ public class RainbowStarsMod : IMod
     private static readonly int MainColor = Shader.PropertyToID("_StarColor");
     private const int COLORS = 8;
 
-    public ModMetadata Metadata => new ModMetadata("Rainbow Stars", "Shapez2-Team", "0.0.1");
+    public ModMetadata Metadata => new ModMetadata("Rainbow Stars", "lorenzofman", "0.0.1");
    
     private static void PatchResources(SpaceThemeBackgroundStars.ExtraResources resources)
     {

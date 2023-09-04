@@ -1,22 +1,19 @@
-﻿using HarmonyLib;
-using JetBrains.Annotations;
-using System;
-using System.Linq;
+﻿using System.Linq;
 
 public class InfiniteLayers : IMod
 {
-    public ModMetadata Metadata => new ModMetadata("Infinite Layers", "Shapez2 Team", "1.0.0");
+    public ModMetadata Metadata => new ModMetadata("Infinite Layers", "lorenzofman", "1.0.0");
     private const int BaseLayers = 2;
     private const int Layers = 100;
     private static bool Patched = false;
-    public void Init()
+    public void Init(string path)
     {
         ShapezCallbackExt.OnPreGameStart += OnPreGameStart;
     }
 
     private void OnPreGameStart()
     {
-        // This is called before each game loading, but we only need to execute one time (yes, it needs a officially supported callback)
+        // This is called before each game loading, but we only need to execute one time (yes, it needs an officially supported callback)
         if (Patched)
         {
             return;

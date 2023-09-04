@@ -1,17 +1,30 @@
-﻿using HarmonyLib;
-using JetBrains.Annotations;
+﻿using MonoMod.RuntimeDetour;
 using System;
 using System.Reflection;
+using UnityEngine;
 
 public class InfiniteIslands : IMod
 {
-    public ModMetadata Metadata => new ModMetadata("Infinite Islands", "Shapez2 Team", "1.0.0");
+    public ModMetadata Metadata => new ModMetadata("Infinite Islands", "lorenzofman", "1.0.0");
 
-    public void Init()
+    public void Init(string path)
     {
-        Harmony harmony = new Harmony("InfiniteIslands");
-        harmony.PatchAll(typeof(Patch));
         ShapezCallbackExt.OnPostGameStart += OnGameStart;
+        // Note: this is not ideal because we need to rely on string lookups to find the method name
+        // One idea would be to have an automated program create public type definitions for every class in the project
+        // Similar to a .h which holds all definitions, and then some utility function to actually get the correct reflected type
+        var method = typeof(ResearchChunkLimitManager).GetMethod("ComputeChunkLimit", BindingFlags.Instance | BindingFlags.NonPublic);
+
+        if (method == null)
+        {
+            throw new Exception();
+        }
+        new Hook(method, typeof(InfiniteIslands).GetMethod(nameof(Nothing)));
+    }
+
+    public static void Nothing(ResearchChunkLimitManager researchChunkLimitManager)
+    {
+        Debug.Log("ok");
     }
 
     private void OnGameStart()
@@ -19,23 +32,4 @@ public class InfiniteIslands : IMod
         var propertyInfo = typeof(ResearchChunkLimitManager).GetProperty("CurrentChunkLimit");
         propertyInfo.SetValue(GameCore.G.Research.ChunkLimitManager, Convert.ChangeType(999999, propertyInfo.PropertyType), null);
     }
-
-    private class Patch
-    {
-        /// <summary>
-        /// Patching a method with HarmonyX.
-        /// </summary>
-        /// <remarks>
-        /// This will likely not be supported in future mod versions to account for dependencies and sorting
-        /// </remarks>
-        [HarmonyPatch(typeof(ResearchChunkLimitManager), "ComputeChunkLimit")]
-        [HarmonyPrefix]
-        [UsedImplicitly]
-        private static bool Prefix()
-        {
-            // Do nothing
-            return false;
-        }
-    }
-
 }
