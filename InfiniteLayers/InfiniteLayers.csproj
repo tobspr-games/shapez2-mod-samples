@@ -7,9 +7,14 @@
     <RunPostBuildEvent>Always</RunPostBuildEvent>
   </PropertyGroup>
 
+   <PropertyGroup>
+    <OutputPath>$(SPZ2_PERSISTENT)\mods\InfiniteLayers</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
+
   <ItemGroup>
     <Reference Include="ShapezShifter">
-      <HintPath>$(USERPROFILE)\AppData\LocalLow\tobspr Games\shapez 2\patchers\ShapezShifter.dll</HintPath>
+      <HintPath>$(SPZ2_PERSISTENT)/patchers/ShapezShifter.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="SPZGameAssembly">
@@ -21,9 +26,5 @@
       <Private>False</Private>
     </Reference>
   </ItemGroup>
-
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy &quot;$(TargetDir)&quot; &quot;$(USERPROFILE)\AppData\LocalLow\tobspr Games\shapez 2\mods\InfiniteLayers&quot; /Y /I" />
-  </Target>
 
 </Project>

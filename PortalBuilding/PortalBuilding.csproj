@@ -7,13 +7,22 @@
     <AssemblyName>$(MSBuildProjectName)</AssemblyName>
   </PropertyGroup>
 
+   <PropertyGroup>
+    <OutputPath>$(SPZ2_PERSISTENT)\mods\PortalBuilding</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
   <ItemGroup>
+  <Content Include="..\resources\**"  CopyToOutputDirectory="PreserveNewest"  />
+</ItemGroup>
+
+  <ItemGroup>
+       
     <Reference Include="MonoMod.RuntimeDetour">
-      <HintPath>$(USERPROFILE)\AppData\LocalLow\tobspr Games\shapez 2\patchers\deps\MonoMod.RuntimeDetour.dll</HintPath>
+        <HintPath>$(SPZ2_PERSISTENT)/patchers/deps/MonoMod.RuntimeDetour.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="ShapezShifter">
-      <HintPath>$(USERPROFILE)\AppData\LocalLow\tobspr Games\shapez 2\patchers\ShapezShifter.dll</HintPath>
+      <HintPath>$(SPZ2_PERSISTENT)/patchers/ShapezShifter.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="SPZGameAssembly">
@@ -34,8 +43,12 @@
     </Reference>
   </ItemGroup>
 
-	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Exec Command="xcopy &quot;$(TargetDir)&quot; &quot;$(USERPROFILE)\AppData\LocalLow\tobspr Games\shapez 2\mods\Portal&quot; /Y /I &amp;&#xD;&#xA;xcopy &quot;$(ProjectDir)\resources&quot; &quot;$(USERPROFILE)\AppData\LocalLow\tobspr Games\shapez 2\mods\Portal\Resources&quot; /Y /I" />
-	</Target>
+  <ItemGroup>
+    <None Update="resources\**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+
 
 </Project>

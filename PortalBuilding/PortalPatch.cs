@@ -14,7 +14,7 @@ public class PortalPatch : IMod
 
     public void Init(string path)
     {
-        var portalAssetBundlePath = Path.Combine(path, "Resources", "portal");
+        var portalAssetBundlePath = Path.Combine(path, "resources", "portal");
         ShapezCallbackExt.OnPreGameStart += () => OnGameStart(portalAssetBundlePath);
     }
 
