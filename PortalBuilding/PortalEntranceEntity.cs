@@ -8,6 +8,7 @@ internal class PortalEntranceEntity : MapEntity
     protected BeltLane InputLane;
     protected IPortalReceiver Receiver;
     protected BeltPathLogic Path;
+
     public PortalEntranceEntity(CtorArgs payload) : base(payload)
     {
         InputLane = new BeltLane(InternalVariant.BeltLaneDefinitions[0]);
@@ -97,8 +98,7 @@ internal class PortalEntranceEntity : MapEntity
         return new HUDSidePanelModuleBaseStat[]
         {
             new HUDSidePanelModuleStatProcessingTime(
-                internalVariant.BeltLaneDefinitions[0].ScaledDuration_NonDeterministic,
-                internalVariant.BeltLaneDefinitions[0].Speed
+                internalVariant.BeltLaneDefinitions[0].ScaledDuration_NonDeterministic
             )
         };
     }
@@ -140,6 +140,16 @@ internal class PortalEntranceEntity : MapEntity
     {
         DrawDynamic_BeltLane(options, InputLane);
 
-        DrawDynamic_SupportMesh(options, 0, float3.zero);
+        // We don't use LODs in this case
+        var lodMesh = InternalVariant.SupportMeshesInternalLOD[0];
+        ref var reference = ref lodMesh.GetEntry(options.BuildingsLOD);
+
+        options.InstanceManager.AddInstance(
+            key: reference.InstancingID,
+            mesh: reference.Mesh,
+            material: RuntimeLoadedPortalResources.EntrancePortal,
+            transform: FastMatrix.TranslateRotate(W_From_L(float3.zero), Rotation_G),
+            camera: options.MainTargetRenderCamera
+        );
     }
 }

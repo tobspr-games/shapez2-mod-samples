@@ -9,7 +9,6 @@ internal static class PortalPool
 {
     private static readonly HashSet<IPortalReceiver> AvailablePortals = new HashSet<IPortalReceiver>();
 
-
     internal static void SubscribePortal(IPortalReceiver portalExitEntity)
     {
         AvailablePortals.Add(portalExitEntity);

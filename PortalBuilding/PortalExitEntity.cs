@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using Unity.Mathematics;
+using UnityEngine;
 
 [Serializable]
 public class PortalExitEntity : MapEntity, IPortalReceiver
@@ -33,8 +35,7 @@ public class PortalExitEntity : MapEntity, IPortalReceiver
         return new HUDSidePanelModuleBaseStat[]
         {
             new HUDSidePanelModuleStatProcessingTime(
-                internalVariant.BeltLaneDefinitions[0].ScaledDuration_NonDeterministic,
-                internalVariant.BeltLaneDefinitions[0].Speed
+                internalVariant.BeltLaneDefinitions[0].ScaledDuration_NonDeterministic
             )
         };
     }
@@ -51,7 +52,18 @@ public class PortalExitEntity : MapEntity, IPortalReceiver
     protected override void Hook_OnDrawDynamic(ChunkFrameDrawOptions options)
     {
         DrawDynamic_BeltLane(options, OutputLane);
-        DrawDynamic_SupportMesh(options, 0, float3.zero);
+
+        // We don't use LODs in this case
+        var lodMesh = InternalVariant.SupportMeshesInternalLOD[0];
+        ref var reference = ref lodMesh.GetEntry(options.BuildingsLOD);
+
+        options.InstanceManager.AddInstance(
+            key: reference.InstancingID,
+            mesh: reference.Mesh,
+            material: RuntimeLoadedPortalResources.ExitPortal,
+            transform: FastMatrix.TranslateRotate(W_From_L(float3.zero), Rotation_G),
+            camera: options.MainTargetRenderCamera
+        );
     }
 
     public void ReceiveItem(BeltItem item, int excessSteps_S)

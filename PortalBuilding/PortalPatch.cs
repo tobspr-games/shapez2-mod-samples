@@ -6,6 +6,12 @@ using System.Linq;
 using Unity.Mathematics;
 using UnityEngine;
 
+/// <summary>
+/// This mod is a proof of concept for adding a new building
+/// </summary>
+/// <remarks>
+/// Some architecture choices are not great and the building itself has issues (serialization/saving, efficiency) that may or may not be fixed in the future
+/// </remarks>
 public class PortalPatch : IMod
 {
     public ModMetadata Metadata => new ModMetadata("Portal Building", "lorenzofman", "0.0.1f2");
@@ -15,15 +21,16 @@ public class PortalPatch : IMod
     public void Init(string path)
     {
         var portalAssetBundlePath = Path.Combine(path, "resources", "portal");
-        ShapezCallbackExt.OnPreGameStart += () => OnGameStart(portalAssetBundlePath);
+        ShapezCallbackExt.OnPreGameStart += () => BeforeGameStart(portalAssetBundlePath);
     }
 
-    private void OnGameStart(string portalAssetBundlePath)
+    private void BeforeGameStart(string portalAssetBundlePath)
     {
         if (PortalBundle == null)
         {
             PortalBundle = AssetBundle.LoadFromFile(portalAssetBundlePath);
-
+            RuntimeLoadedPortalResources.EntrancePortal = PortalBundle.LoadAsset<Material>("Assets/Materials/PortalEntrance.mat");
+            RuntimeLoadedPortalResources.ExitPortal = PortalBundle.LoadAsset<Material>("Assets/Materials/PortalExit.mat");
             CreateEntity();
         }
 
@@ -31,84 +38,52 @@ public class PortalPatch : IMod
 
     private void CreateEntity()
     {
-        var hooks = DetourOnEnableForScriptableObjects(typeof(MetaBuilding), typeof(MetaBuildingVariant), typeof(MetaBuildingInternalVariant));
-
-        var entrancePortalMeshes = PortalBundle.LoadAssetWithSubAssets<Mesh>("Assets/Models/PortalEntrance.fbx");
-        var exitPortalMeshes = PortalBundle.LoadAssetWithSubAssets<Mesh>("Assets/Models/PortalExit.fbx");
-
-        MetaBuilding portalMetaBuilding = new MetaBuilding
-        {
-            Categories = new List<string>() { "transport" },
-
-            Icon = PortalBundle.LoadAsset<Sprite>("Assets/Icons/PortalIcon.png"),
-            Variants = new List<MetaBuildingVariant>
-            {
-                CreateEntrance(entrancePortalMeshes[1], entrancePortalMeshes[0]), CreateExit(exitPortalMeshes[1], exitPortalMeshes[0])
-            }
-        };
-
-        RestoreEnableScriptableObjects(portalMetaBuilding, hooks);
-
         HookHelper.CreatePostfixHook<SavegameCoordinator>(coordinator => coordinator.InitAfterCoreLoad(), AddBuildingAfterGameLoadButBeforeHudInitialization);
 
         void AddBuildingAfterGameLoadButBeforeHudInitialization()
         {
+            var entrancePortalMeshes = PortalBundle.LoadAssetWithSubAssets<Mesh>("Assets/Models/PortalEntrance.fbx");
+            var exitPortalMeshes = PortalBundle.LoadAssetWithSubAssets<Mesh>("Assets/Models/PortalExit.fbx");
+
+            MetaBuilding portalMetaBuilding = new MetaBuilding
+            {
+                Categories = new List<string>() { "transport" },
+
+                Icon = PortalBundle.LoadAsset<Sprite>("Assets/Icons/PortalIcon.png"),
+                Variants = new List<MetaBuildingVariant>
+                {
+                    CreateEntrance(entrancePortalMeshes[1], entrancePortalMeshes[0]), CreateExit(exitPortalMeshes[1], exitPortalMeshes[0])
+                }
+            };
+
             if (GameCore.G.Mode.Buildings.Contains(portalMetaBuilding))
             {
                 return;
             }
             GameCore.G.Mode.Buildings.Add(portalMetaBuilding);
-            MetaResearchLevel node = new MetaResearchLevel
+
+            var researchable = new MetaResearchable();
+
+            var unlocksFieldInfo = typeof(MetaResearchable).GetField("_Unlocks", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+
+            List<IResearchUnlock> unlocks = portalMetaBuilding.Variants.Cast<IResearchUnlock>().ToList();
+            unlocksFieldInfo.SetValue(researchable, unlocks);
+
+            var cost = new ResearchUnlockCost()
             {
-                Cost = new ResearchUnlockCost[] 
-                {
-                    new ResearchUnlockCost()
-                    {
-                        AmountThroughput = 4,
-                        DefinitionHash = "CuCuCuCu",
-                    }
-                },
-                Unlocks = portalMetaBuilding.Variants.Cast<IResearchUnlock>().ToList(),
+                AmountThroughput = 4,
+                DefinitionHash = "CuCuCuCu",
             };
-            GameCore.G.Mode.Research.Nodes.Add(node);
+
+            var levels = GameCore.G.Research.Tree.Levels;
+
+
+            ResearchLevelHandle newLevel = new ResearchLevelHandle(researchable, cost, levels.Length, Array.Empty<ResearchSideGoalHandle>(), levels[^1]);
+            var newLevels = levels.Concat(new ResearchLevelHandle[] { newLevel }).ToArray();
+
+            var levelsPropertyInfo = typeof(ResearchTreeHandle).GetProperty("Levels");
+            levelsPropertyInfo.SetValue(GameCore.G.Research.Tree, newLevels, null);
         }
-    }
-
-
-    private void RestoreEnableScriptableObjects(MetaBuilding portalMetaBuilding, Hook[] hooks)
-    {
-        foreach (var hook in hooks)
-        {
-            hook.Dispose();
-        }
-
-        typeof(MetaBuilding).GetInstancePrivateMethod("OnEnable").Invoke(portalMetaBuilding, null);
-
-        foreach (var variant in portalMetaBuilding.Variants)
-        {
-            typeof(MetaBuildingVariant).GetInstancePrivateMethod("OnEnable").Invoke(variant, null);
-
-            foreach (var internalVariant in variant.InternalVariants)
-            {
-                typeof(MetaBuildingInternalVariant).GetInstancePrivateMethod("OnEnable").Invoke(internalVariant, null);
-            }
-        }
-    }
-
-    private Hook[] DetourOnEnableForScriptableObjects(params Type[] types)
-    {
-        Hook[] hooks = new Hook[types.Length];
-        for (int i = 0; i < types.Length; i++)
-        {
-            hooks[i] = new Hook(types[i].GetInstancePrivateMethod("OnEnable"),
-                typeof(PortalPatch).GetMethod(nameof(Empty)));
-        }
-        return hooks;
-    }
-
-    public static void Empty(object obj)
-    {
-        
     }
 
     private static MetaBuildingVariant CreateEntrance(Mesh portalBase, Mesh portal)
@@ -151,7 +126,7 @@ public class PortalPatch : IMod
                 Dimensions_L = new float3(1, 1, 1)
             }
         };
-        portalEntranceInternalVariant.Tiles = new int3[] { int3.zero };
+        portalEntranceInternalVariant.Tiles = new TileDirection[] { TileDirection.Zero };
 
         portalEntranceInternalVariant.BeltInputs = new MetaBuildingInternalVariant.BeltIO[]
         {
@@ -174,9 +149,9 @@ public class PortalPatch : IMod
                 Duration = 0.5f,
                 Length_W = 0.5f,
                 ItemStartPos_L = new float3(-0.5f, 0, 0),
-                ItemEndPos_L = float3.zero,
+                ItemEndPos_L = new float3(0.5f, 0, 0),
                 Filter = BeltLaneDefinition.ItemFilter.None,
-                Speed = new MetaResearchSpeed()
+                Speed = GetBeltSpeed()
             }
         };
 
@@ -194,7 +169,6 @@ public class PortalPatch : IMod
         };
 
         portalExitInternalVariant.Variant = portalExitVariant;
-
 
         portalExitInternalVariant.Implementation.ClassID = typeof(PortalExitEntity).AssemblyQualifiedName;
         portalExitInternalVariant.HasMainMesh = true;
@@ -225,7 +199,7 @@ public class PortalPatch : IMod
         };
         
 
-        portalExitInternalVariant.Tiles = new int3[] { int3.zero };
+        portalExitInternalVariant.Tiles = new TileDirection[] { TileDirection.Zero };
 
         portalExitInternalVariant.BeltOutputs = new MetaBuildingInternalVariant.BeltIO[]
         {
@@ -246,13 +220,20 @@ public class PortalPatch : IMod
                 Name = "PortalExit",
                 Duration = 0.5f,
                 Length_W = 0.5f,
-                ItemStartPos_L = new float3(0, 0, 0),
+                ItemStartPos_L = new float3(-0.5f, 0, 0),
                 ItemEndPos_L = new float3(0.5f, 0, 0),
                 Filter = BeltLaneDefinition.ItemFilter.None,
-                Speed = new MetaResearchSpeed()
+                Speed = GetBeltSpeed()
             }
         };
 
         return portalExitVariant;
+    }
+
+    private static MetaResearchSpeed GetBeltSpeed()
+    {
+        Debug.Assert(GameCore.G.Mode.Research.Speeds != null);
+        // Currently there is no way to just access a valid speed node. This function is a very hacky way to get some valid reference
+        return GameCore.G.Mode.Research.Speeds.CachedEntries.First().Key;
     }
 }

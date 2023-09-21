@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 3342586226
+CRC: 2244179246
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: fce55b474350a9b115bfc20025204581
+    Hash: 542d0989b6bdfadc4e04042f2933b199
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 130ed3b6e0641de91338e3cc8b6c02ca
+    Hash: eb513b2d9228c497b0b79ef976796f53
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -25,15 +25,13 @@ ClassTypes:
   Script: {instanceID: 0}
 - Class: 48
   Script: {instanceID: 0}
-- Class: 64
-  Script: {instanceID: 0}
 - Class: 213
   Script: {instanceID: 0}
 SerializeReferenceClassIdentifiers: []
 Assets:
-- Assets/Reversed Interactive/The Portal Collection/FBX/PortalEight.fbx
-- Assets/Reversed Interactive/The Portal Collection/Prefabs/PortalEight.prefab
 - Assets/Models/PortalExit.fbx
+- Assets/Materials/PortalEntrance.mat
 - Assets/Icons/PortalIcon.png
+- Assets/Materials/PortalExit.mat
 - Assets/Models/PortalEntrance.fbx
 Dependencies: []
