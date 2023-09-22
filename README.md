@@ -1,6 +1,6 @@
 ### Requirements
 
-- Shapez2 Alpha 7.5+
+- Shapez2 Alpha 9
 - [ShapezShifter](https://github.com/tobspr-games/shapez2-modding-api) - MonoMod based Shapez2 base API
 - Visual Studio (recommended) or Rider or VSCode
 
