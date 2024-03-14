@@ -27,7 +27,7 @@ public class RainbowStarsMod : IMod
 
     public ModMetadata Metadata => new ModMetadata("Rainbow Stars", "lorenzofman", "0.0.1");
    
-    private static void PatchResources(SpaceThemeBackgroundStars.ExtraResources resources)
+    private static void PatchResources(SpaceThemeBackgroundStarsResources resources)
     {
         var sampleMaterial = resources.StarMaterial[0];
         resources.StarMaterial = new Material[COLORS];
