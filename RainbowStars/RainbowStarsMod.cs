@@ -1,41 +1,60 @@
 ﻿using System;
-using System.Threading.Tasks;
+using JetBrains.Annotations;
+using ShapezShifter;
 using UnityEngine;
+using ILogger = Core.Logging.ILogger;
 using Object = UnityEngine.Object;
 
 /// <summary>
-/// Very simple modding example. Hooks to game start and modify stars material colors
+///     Very simple modding example. Hooks to game start and modify stars material colors
 /// </summary>
+[UsedImplicitly]
 public class RainbowStarsMod : IMod
 {
-    public void Init(string path)
+    private const int Colors = 8;
+
+    private static readonly int MainColor = Shader.PropertyToID("_StarColor");
+
+    public RainbowStarsMod(ILogger logger)
     {
-        ShapezCallbackExt.OnPostGameStart += OnGameStart;
+        ShapezCallbackExt.OnPostGameStart.Register(PatchStars);
     }
 
-    private static void OnGameStart()
+    public void Dispose()
     {
-        if (!(GameCore.G.Theme is SpaceTheme spaceTheme))
+    }
+
+    private static void PatchStars()
+    {
+        var gameCore = GameHelper.Core;
+
+        if (gameCore.Theme is SpaceTheme spaceTheme)
+        {
+            // Avoid writing to the original Scriptable Object
+            var resourcesCopy = spaceTheme.ThemeResources.BackgroundStars.Copy();
+            PatchResources(spaceTheme.ThemeResources.BackgroundStars);
+            spaceTheme.ThemeResources.BackgroundStars = resourcesCopy;
+        }
+        else
         {
             throw new Exception("Theme is not SpaceTheme!?");
         }
-        PatchResources(spaceTheme.ThemeResources.BackgroundStars);
     }
 
-    private static readonly int MainColor = Shader.PropertyToID("_StarColor");
-    private const int COLORS = 8;
-
-    public ModMetadata Metadata => new ModMetadata("Rainbow Stars", "lorenzofman", "0.0.1");
-   
     private static void PatchResources(SpaceThemeBackgroundStarsResources resources)
     {
-        var sampleMaterial = resources.StarMaterial[0];
-        resources.StarMaterial = new Material[COLORS];
+        var sampleMaterial = resources.StarMaterial[0].GetMaterialInternal();
+        resources.StarMaterial = new MaterialReference[Colors];
 
-        for (var i = 0; i < COLORS; i++)
+        for (var i = 0; i < Colors; i++)
         {
-            resources.StarMaterial[i] = Object.Instantiate(sampleMaterial);
-            resources.StarMaterial[i].SetColor(MainColor, Color.HSVToRGB((float)i / COLORS, 1, 1, false));
+            var materialCopy = Object.Instantiate(sampleMaterial);
+            materialCopy
+                .SetColor(MainColor, Color.HSVToRGB((float)i / Colors, 1, 1, false));
+            resources.StarMaterial[i] = new MaterialReference
+            {
+                _Material = materialCopy
+            };
         }
     }
 }
