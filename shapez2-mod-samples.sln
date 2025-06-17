@@ -5,8 +5,6 @@ VisualStudioVersion = 17.5.33502.453
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RainbowStars", "RainbowStars\RainbowStars.csproj", "{9509683E-B16E-48B0-AC0B-70A4D5A28806}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InfiniteIslands", "InfiniteIslands\InfiniteIslands.csproj", "{8C7B197C-F5EE-45D3-870F-5FE9DC603FF9}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,10 +19,6 @@ Global
 		{10E1656D-CFBA-4CE8-AFF2-6667CE0B68EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{10E1656D-CFBA-4CE8-AFF2-6667CE0B68EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{10E1656D-CFBA-4CE8-AFF2-6667CE0B68EF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8C7B197C-F5EE-45D3-870F-5FE9DC603FF9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8C7B197C-F5EE-45D3-870F-5FE9DC603FF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8C7B197C-F5EE-45D3-870F-5FE9DC603FF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8C7B197C-F5EE-45D3-870F-5FE9DC603FF9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AB59B58A-561B-4532-BB6D-DD9A7FBD0828}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AB59B58A-561B-4532-BB6D-DD9A7FBD0828}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AB59B58A-561B-4532-BB6D-DD9A7FBD0828}.Release|Any CPU.ActiveCfg = Release|Any CPU
