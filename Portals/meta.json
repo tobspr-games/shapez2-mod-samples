@@ -1,0 +1,20 @@
+{
+  "Name": "tobspr.Portals",
+  "Version": "0.0.1",
+  "Title": "Portals",
+  "Description": "Adds a portal sender and a portal receiver to the game",
+  "Author": "tobspr Games",
+  "SaveGameCompabilityRange": "*",
+  "GameVersionSupportRange": "*",
+  "AffectsSaveGames": true,
+  "Conflicts": [],
+  "Assemblies": [
+    "Portals.dll"
+  ],
+  "Dependencies": [
+    {
+      "ModId": "steam:3542611357",
+      "Version": "0.0.1"
+    }
+  ]
+}

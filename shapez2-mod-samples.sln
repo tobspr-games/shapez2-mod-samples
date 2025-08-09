@@ -5,6 +5,8 @@ VisualStudioVersion = 17.5.33502.453
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RainbowStars", "RainbowStars\RainbowStars.csproj", "{9509683E-B16E-48B0-AC0B-70A4D5A28806}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Portals", "Portals\Portals.csproj", "{2DBD01F2-894E-410D-A485-CB95AFA0E610}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{F206D72F-068F-4EF0-89D8-3EC1C54F2C40}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F206D72F-068F-4EF0-89D8-3EC1C54F2C40}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F206D72F-068F-4EF0-89D8-3EC1C54F2C40}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2DBD01F2-894E-410D-A485-CB95AFA0E610}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DBD01F2-894E-410D-A485-CB95AFA0E610}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DBD01F2-894E-410D-A485-CB95AFA0E610}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DBD01F2-894E-410D-A485-CB95AFA0E610}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
