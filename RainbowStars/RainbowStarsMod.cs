@@ -31,7 +31,7 @@ public class RainbowStarsMod : IMod
         if (gameCore.Theme is SpaceTheme spaceTheme)
         {
             // Avoid writing to the original Scriptable Object
-            var resourcesCopy = spaceTheme.ThemeResources.BackgroundStars.Copy();
+            var resourcesCopy = spaceTheme.ThemeResources.BackgroundStars.DeepCopy();
             PatchResources(spaceTheme.ThemeResources.BackgroundStars);
             spaceTheme.ThemeResources.BackgroundStars = resourcesCopy;
         }

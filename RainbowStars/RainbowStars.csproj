@@ -10,7 +10,9 @@
         <ModIoGameId>10219</ModIoGameId>
 
         <!-- Replace with your mod ID, make sure to include the install ID-->
-        <ModIoModId>5047623_6509645</ModIoModId>
+
+        <!-- Todo: search for folder version-->
+        <ModIoModId>5047623_6520865</ModIoModId>
 
         <IsWindows Condition="'$(OS)' == 'Windows_NT'">true</IsWindows>
         <ModIoBasePath Condition="'$(IsWindows)' == 'true'">C:\Users\Public\mod.io</ModIoBasePath>
@@ -21,7 +23,7 @@
 
     <ItemGroup>
         <Reference Include="ShapezShifter">
-            <HintPath>$(SPZ2_PERSISTENT)/mods/ShapezShifter/ShapezShifter.dll</HintPath>
+            <HintPath>$(SPZ2_SHIFTER)\ShapezShifter.dll</HintPath>
             <Private>False</Private>
         </Reference>
         <Reference Include="SPZGameAssembly">
@@ -44,6 +46,11 @@
     <ItemGroup>
         <Publicize Include="SPZGameAssembly"/>
     </ItemGroup>
+
+    <PropertyGroup>
+        <PublicizeAll/>
+        <PublicizerClearCacheOnClean>true</PublicizerClearCacheOnClean>
+    </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="Krafs.Publicizer" Version="2.3.0">
