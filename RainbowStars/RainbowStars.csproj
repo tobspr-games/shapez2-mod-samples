@@ -23,7 +23,7 @@
 
     <ItemGroup>
         <Reference Include="ShapezShifter">
-            <HintPath>$(SPZ2_SHIFTER)\ShapezShifter.dll</HintPath>
+            <HintPath>$(SPZ2_SHIFTER)</HintPath>
             <Private>False</Private>
         </Reference>
         <Reference Include="SPZGameAssembly">
@@ -38,13 +38,14 @@
             <HintPath>$(SPZ2_PATH)\Core.dll</HintPath>
             <Private>False</Private>
         </Reference>
+        <Reference Include="Game.Core.Modding">
+            <HintPath>$(SPZ2_PATH)\Game.Core.Modding.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
         <Reference Include="UnityEngine.CoreModule">
             <HintPath>$(SPZ2_PATH)\UnityEngine.CoreModule.dll</HintPath>
             <Private>False</Private>
         </Reference>
-    </ItemGroup>
-    <ItemGroup>
-        <Publicize Include="SPZGameAssembly"/>
     </ItemGroup>
 
     <PropertyGroup>

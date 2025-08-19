@@ -17,21 +17,19 @@ public class RainbowStarsMod : IMod
 
     public RainbowStarsMod(ILogger logger)
     {
-        ShapezCallbackExt.OnPostGameStart.Register(PatchStars);
+        // ShapezCallbackExt.OnPostGameStart.Register(PatchStars);
     }
 
-    public void Dispose()
-    {
-    }
+    public void Dispose() { }
 
     private static void PatchStars()
     {
-        var gameCore = GameHelper.Core;
+        GameCore gameCore = GameHelper.Core;
 
         if (gameCore.Theme is SpaceTheme spaceTheme)
         {
             // Avoid writing to the original Scriptable Object
-            var resourcesCopy = spaceTheme.ThemeResources.BackgroundStars.DeepCopy();
+            SpaceThemeBackgroundStarsResources resourcesCopy = spaceTheme.ThemeResources.BackgroundStars.DeepCopy();
             PatchResources(spaceTheme.ThemeResources.BackgroundStars);
             spaceTheme.ThemeResources.BackgroundStars = resourcesCopy;
         }
@@ -43,18 +41,15 @@ public class RainbowStarsMod : IMod
 
     private static void PatchResources(SpaceThemeBackgroundStarsResources resources)
     {
-        var sampleMaterial = resources.StarMaterial[0].GetMaterialInternal();
+        Material sampleMaterial = resources.StarMaterial[0].GetMaterialInternal();
         resources.StarMaterial = new MaterialReference[Colors];
 
-        for (var i = 0; i < Colors; i++)
+        for (int i = 0; i < Colors; i++)
         {
-            var materialCopy = Object.Instantiate(sampleMaterial);
-            materialCopy
-                .SetColor(MainColor, Color.HSVToRGB((float)i / Colors, 1, 1, false));
-            resources.StarMaterial[i] = new MaterialReference
-            {
-                _Material = materialCopy
-            };
+            Material materialCopy = Object.Instantiate(sampleMaterial);
+            materialCopy.SetColor(MainColor, Color.HSVToRGB((float)i / Colors, 1, 1, false));
+
+            // resources.StarMaterial[i] = new MaterialReference(null) { _Material = materialCopy };
         }
     }
 }
