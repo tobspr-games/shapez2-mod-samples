@@ -21,7 +21,7 @@
 
     <ItemGroup>
         <Reference Include="ShapezShifter">
-            <HintPath>$(SPZ2_SHIFTER)\ShapezShifter.dll</HintPath>
+            <HintPath>$(SPZ2_SHIFTER)</HintPath>
             <Private>False</Private>
         </Reference>
 
@@ -30,6 +30,10 @@
             <Private>False</Private>
         </Reference>
 
+        <Reference Include="Game.Core.Map.Model">
+            <HintPath>$(SPZ2_PATH)\Game.Core.Map.Model.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
         <Reference Include="Game.Core.Modding">
             <HintPath>$(SPZ2_PATH)\Game.Core.Modding.dll</HintPath>
             <Private>False</Private>
@@ -75,6 +79,10 @@
             <HintPath>$(SPZ2_PATH)\UnityEngine.CoreModule.dll</HintPath>
             <Private>False</Private>
         </Reference>
+        <Reference Include="UnityEngine.AssetBundleModule">
+            <HintPath>$(SPZ2_PATH)\UnityEngine.AssetBundleModule.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
     </ItemGroup>
 
     <PropertyGroup>
@@ -101,6 +109,12 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <None Update="meta.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Resources/Portal">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Resources/Portal.manifest">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
 

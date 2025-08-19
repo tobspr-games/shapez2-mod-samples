@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Core.Collections;
 using Core.Localization;
@@ -21,13 +22,13 @@ public class PortalsMod : IMod
     public PortalsMod(ILogger logger)
     {
         PortalBuildingsExtender = new PortalBuildingsExtender(logger);
-        var handle = ShapezExtensions.AddExtender(PortalBuildingsExtender);
+        ExtenderHandle handle = ShapezExtensions.AddExtender(PortalBuildingsExtender);
         ExtenderHandles.Add(handle);
     }
 
     public void Dispose()
     {
-        foreach (var handle in ExtenderHandles)
+        foreach (ExtenderHandle handle in ExtenderHandles)
         {
             ShapezExtensions.RemoveExtender(handle);
         }
@@ -37,37 +38,57 @@ public class PortalsMod : IMod
     }
 }
 
-public class PortalBuildingsExtender : IPlacementInitiatorsExtender, IToolbarDataExtender, IBuildingsExtender,
-    IBuildingModulesExtender, IResearchExtender, IDisposable
+public class PortalBuildingsExtender
+    : IShapeBuildingsPlacementInitiatorsExtender,
+      IToolbarDataExtender,
+      IBuildingsExtender,
+      IBuildingModulesExtender,
+      IGameScenarioExtender,
+      IDisposable
 {
     private readonly ILogger Logger;
     private readonly BuildingDefinitionGroupId PortalReceiverGroupId = new("Portal_ReceiverGroup");
 
     private readonly BuildingDefinitionId PortalReceiverId = new("Portal_Receiver");
+    private readonly AssetBundle PortalResources;
 
-    private readonly BuildingDefinitionGroupId
-        PortalSenderGroupId = new("Portal_SenderGroup");
+    private readonly BuildingDefinitionGroupId PortalSenderGroupId = new("Portal_SenderGroup");
 
     private readonly BuildingDefinitionId PortalSenderId = new("Portal_Sender");
     private BuildingsModulesLookup ModulesLookup;
-    private PlacementInitiatorId? PlacementInitiatorId;
+
     private BuildingDefinitionGroup PortalReceiverGroup;
+    private AnyIdUnlockedWithResearchRewards<BuildingDefinitionGroupId> PortalReceiverRuleProcessor;
     private BuildingDefinitionGroup PortalSenderGroup;
-    private AnyIdUnlockedWithResearchRewards<BuildingDefinitionGroupId> RuleProcessor;
+    private AnyIdUnlockedWithResearchRewards<BuildingDefinitionGroupId> PortalSenderRuleProcessor;
+    private PlacementInitiatorId? ReceiverPlacementInitiatorId;
+    private PlacementInitiatorId? SenderPlacementInitiatorId;
 
     public PortalBuildingsExtender(ILogger logger)
     {
         Logger = logger;
+        string basePath = Path.GetDirectoryName(typeof(PortalBuildingsExtender).Assembly.Location);
+        string resourcesPath = Path.Combine(basePath, "Resources", "Portal");
+        PortalResources = AssetBundle.LoadFromFile(resourcesPath);
     }
 
+    public void Dispose()
+    {
+        PortalSenderRuleProcessor?.Dispose();
+    }
 
     public void AddModules(BuildingsModulesLookup modulesLookup)
     {
         ModulesLookup = modulesLookup;
+        modulesLookup.AddModule(PortalSenderId, PortalSenderGroup.Definitions[0], new NoBuildingModules());
+        modulesLookup.AddModule(PortalReceiverId, PortalReceiverGroup.Definitions[0], new NoBuildingModules());
     }
 
-    public GameBuildings ModifyGameBuildings(MetaGameModeBuildings metaBuildings, GameBuildings gameBuildings,
-        IMeshCache meshCache, VisualThemeBaseResources theme)
+    public GameBuildings ModifyGameBuildings(
+        MetaGameModeBuildings metaBuildings,
+        GameBuildings gameBuildings,
+        IMeshCache meshCache,
+        VisualThemeBaseResources theme)
     {
         Logger.Info?.Log($"Modifying Game Buildings. Object reference: {gameBuildings.GetRefId()}");
         if (gameBuildings._DefinitionsById.ContainsKey(PortalSenderId))
@@ -75,17 +96,23 @@ public class PortalBuildingsExtender : IPlacementInitiatorsExtender, IToolbarDat
             return gameBuildings;
         }
 
-        PortalSenderGroup = BuildingHelper.CreateBuildingGroup(PortalSenderGroupId.Id,
+        PortalSenderGroup = BuildingHelper.CreateBuildingGroup(
+            PortalSenderGroupId.Id,
             CreateMockSprite(32, 32, Color.red),
-            "Portal Sender",
-            "Sends a shape through a portal", false, DefaultPreferredPlacementMode.Single);
+            new RawText("Portal Sender"),
+            new RawText("Sends a shape through a portal"),
+            false,
+            DefaultPreferredPlacementMode.Single);
 
-        PortalReceiverGroup = BuildingHelper.CreateBuildingGroup(PortalReceiverGroupId.Id,
+        PortalReceiverGroup = BuildingHelper.CreateBuildingGroup(
+            PortalReceiverGroupId.Id,
             CreateMockSprite(32, 32, Color.green),
-            "Portal Receiver",
-            "Receives a shape through a portal", false, DefaultPreferredPlacementMode.Single);
+            new RawText("Portal Receiver"),
+            new RawText("Receives a shape through a portal"),
+            false,
+            DefaultPreferredPlacementMode.Single);
 
-        var senderInput = new BuildingItemInput
+        BuildingItemInput senderInput = new()
         {
             IOType = BuildingItemIOType.ElevatedBorder,
             Position_L = TileVector.Zero,
@@ -94,7 +121,7 @@ public class PortalBuildingsExtender : IPlacementInitiatorsExtender, IToolbarDat
             TileDirection = TileDirection.West
         };
 
-        var receiverOutput = new BuildingItemOutput
+        BuildingItemOutput receiverOutput = new()
         {
             IOType = BuildingItemIOType.ElevatedBorder,
             Position_L = TileVector.Zero,
@@ -103,33 +130,38 @@ public class PortalBuildingsExtender : IPlacementInitiatorsExtender, IToolbarDat
             TileDirection = TileDirection.East
         };
 
-        var tiles = new[]
-        {
-            TileVector.Zero
-        };
+        var tiles = new[] { TileVector.Zero };
 
-        var tileBounds = LocalTileBounds.From_SLOW_DO_NOT_USE(tiles);
-        var tileDimensions = tileBounds.Dimensions;
-        var center = LocalVector.Lerp((LocalVector)tileBounds.Min, (LocalVector)tileBounds.Max, 0.5f);
+        LocalTileBounds tileBounds = LocalTileBounds.From_SLOW_DO_NOT_USE(tiles);
+        TileDimensions tileDimensions = tileBounds.Dimensions;
+        LocalVector center = LocalVector.Lerp((LocalVector)tileBounds.Min, (LocalVector)tileBounds.Max, 0.5f);
 
-        IBuildingConnectorData senderConnectorData =
-            new BuildingConnectorData(senderInput.AsEnumerable(), tiles,
-                tileBounds,
-                center,
-                tileDimensions);
+        IBuildingConnectorData senderConnectorData = new BuildingConnectorData(
+            senderInput.AsEnumerable(),
+            tiles,
+            tileBounds,
+            center,
+            tileDimensions);
 
-        IBuildingConnectorData receiverConnectorData =
-            new BuildingConnectorData(receiverOutput.AsEnumerable(), tiles,
-                tileBounds,
-                center,
-                tileDimensions);
+        IBuildingConnectorData receiverConnectorData = new BuildingConnectorData(
+            receiverOutput.AsEnumerable(),
+            tiles,
+            tileBounds,
+            center,
+            tileDimensions);
 
-        var portalSender = CreateDefinition(PortalSenderId, senderConnectorData,
-            PortalSenderGroup, gameBuildings);
+        BuildingDefinition portalSender = CreateDefinition(
+            PortalSenderId,
+            senderConnectorData,
+            PortalSenderGroup,
+            gameBuildings.BeltPortSender);
         PortalSenderGroup.AddInternalVariant(portalSender);
 
-        var portalReceiver = CreateDefinition(PortalReceiverId, receiverConnectorData,
-            PortalReceiverGroup, gameBuildings);
+        BuildingDefinition portalReceiver = CreateDefinition(
+            PortalReceiverId,
+            receiverConnectorData,
+            PortalReceiverGroup,
+            gameBuildings.BeltPortReceiver);
         PortalReceiverGroup.AddInternalVariant(portalReceiver);
 
         gameBuildings._All.Add(PortalSenderGroup);
@@ -144,32 +176,9 @@ public class PortalBuildingsExtender : IPlacementInitiatorsExtender, IToolbarDat
         return gameBuildings;
     }
 
-    public void Dispose()
+    public ToolbarData ModifyToolbarData(ToolbarData toolbarData)
     {
-        RuleProcessor?.Dispose();
-    }
-
-
-    public void ExtendInitiators(IEntityPlacementRunner placementRunner,
-        IPlacementInitiatorIdRegistry placementRegistry)
-    {
-        CreatePlacementInitiator(placementRunner, placementRegistry);
-    }
-
-    public void ModifyResearch(ResearchManager research)
-    {
-        research.Layout.Levels[^1].Rewards = research.Layout.Levels[0].Rewards
-            .Append(
-                new ResearchRewardBuildingGroup(PortalSenderGroupId))
-            .Append(
-                new ResearchRewardBuildingGroup(PortalReceiverGroupId))
-            .ToList();
-    }
-
-    public ToolbarData ModifyToolbarData(
-        ToolbarData toolbarData)
-    {
-        if (!PlacementInitiatorId.HasValue)
+        if (!SenderPlacementInitiatorId.HasValue || !ReceiverPlacementInitiatorId.HasValue)
         {
             throw new Exception("Expected placement initiator extension to be executed before toolbar one");
         }
@@ -180,26 +189,50 @@ public class PortalBuildingsExtender : IPlacementInitiatorsExtender, IToolbarDat
         var elements = transportGroup.Children.ToList();
         var belt = (IPresentableToolbarElementData)elements.First();
 
-        var title = new LazyLocalizedText(new TranslationId(belt.Title.ToString()));
-        var description = new LazyLocalizedText(new TranslationId(belt.Description.ToString()));
-        var elementCopy =
-            new PlacementToolbarElementData(title, description, PlacementInitiatorId.Value, belt.Icon);
-        elements.Add(elementCopy);
+        LazyLocalizedText title = new(new TranslationId(belt.Title.ToString()));
+        LazyLocalizedText description = new(new TranslationId(belt.Description.ToString()));
+
+        var icon = PortalResources.LoadAsset<Sprite>("Assets/Icons/PortalIcon.png");
+
+        PlacementToolbarElementData sender = new(title, description, SenderPlacementInitiatorId.Value, icon);
+        PlacementToolbarElementData receiver = new(title, description, ReceiverPlacementInitiatorId.Value, icon);
+        elements.Add(sender);
+        elements.Add(receiver);
         transportGroup.Children = elements.ToArray();
         return toolbarData;
     }
 
-    private BuildingDefinition CreateDefinition(BuildingDefinitionId id, IBuildingConnectorData connectorData,
-        IBuildingDefinitionGroup definitionGroup, GameBuildings gameBuildings)
+    public void ExtendBuildingInitiators(
+        BuildingInitiatorsParams @params,
+        IPlacementInitiatorIdRegistry placementRegistry)
     {
-        var runtimeDefinition = new BuildingDefinition(id, connectorData);
+        CreatePlacementInitiator(@params.EntityPlacementRunner, placementRegistry);
+    }
+
+    public GameScenario ExtendGameScenario(GameScenario gameScenario)
+    {
+        gameScenario.Progression.Levels[^1].Rewards = gameScenario.Progression.Levels[^1]
+                                                                  .Rewards.Append(
+                                                                       new ResearchRewardBuildingGroup(
+                                                                           PortalSenderGroupId))
+                                                                  .Append(
+                                                                       new ResearchRewardBuildingGroup(
+                                                                           PortalReceiverGroupId))
+                                                                  .ToList();
+        return gameScenario;
+    }
+
+    private BuildingDefinition CreateDefinition(
+        BuildingDefinitionId id,
+        IBuildingConnectorData connectorData,
+        IBuildingDefinitionGroup definitionGroup,
+        IBuildingDefinition blueprint)
+    {
+        BuildingDefinition runtimeDefinition = new(id, connectorData);
 
         runtimeDefinition.CustomData.Attach(definitionGroup.DefaultPreferredPlacementMode);
 
-        runtimeDefinition.CustomData.Attach(
-            new EntityPlacementPreferenceData(
-                false,
-                100));
+        runtimeDefinition.CustomData.Attach(new EntityPlacementPreferenceData(false, 100));
 
         runtimeDefinition.CustomData.Attach(connectorData);
 
@@ -215,26 +248,27 @@ public class PortalBuildingsExtender : IPlacementInitiatorsExtender, IToolbarDat
         runtimeDefinition.CustomData.Attach(definitionGroup);
 
         // Attach the draw data
-        runtimeDefinition.CustomData.Attach(gameBuildings.BeltPortSender.CustomData.Get<IBuildingDrawData>());
+        runtimeDefinition.CustomData.Attach(blueprint.CustomData.Get<IBuildingDrawData>());
 
-        runtimeDefinition.CustomData.Attach(gameBuildings.BeltPortSender.CustomData.Get<IBuildingSoundDefinition>());
+        runtimeDefinition.CustomData.Attach(blueprint.CustomData.Get<IBuildingSoundDefinition>());
 
         runtimeDefinition.CustomData.Attach(new EmptyCustomSimulationConfiguration());
 
-        var efficiencyData = new BuildingEfficiencyData(
-            1,
-            1);
+        BuildingEfficiencyData efficiencyData = new(1, 1);
         runtimeDefinition.CustomData.Attach(efficiencyData);
 
         return runtimeDefinition;
     }
 
-    private void CreatePlacementInitiator(IEntityPlacementRunner placementRunner,
+    private void CreatePlacementInitiator(
+        IEntityPlacementRunner placementRunner,
         IPlacementInitiatorIdRegistry placementRegistry)
     {
-        var portalSenderDefinition = PortalSenderGroup.Definitions[0];
-        var placerData = new PlacerDataBasedOnRepresentingBuilding(portalSenderDefinition, ModulesLookup);
-        var senderEntityPlacer = new ModularEntityPlacer(
+        IBuildingDefinition portalSenderDefinition = PortalSenderGroup.Definitions[0];
+        IBuildingDefinition portalReceiverDefinition = PortalReceiverGroup.Definitions[0];
+
+        PlacerDataBasedOnRepresentingBuilding placerData = new(portalSenderDefinition, ModulesLookup);
+        ModularEntityPlacer senderEntityPlacer = new(
             new SinglePlacer<GlobalTileTransform, GlobalTileCoordinate, TileVector, TileDirection, GlobalTilePivot,
                 LocalTilePivot, TileAxis, BuildingInstanceModel, BuildingConnector, BuildingConnection>(
                 portalSenderDefinition,
@@ -243,28 +277,50 @@ public class PortalBuildingsExtender : IPlacementInitiatorsExtender, IToolbarDat
                 new BuildingMapLayoutRegisterAdapter()),
             placerData);
 
-        RuleProcessor = new AnyIdUnlockedWithResearchRewards<BuildingDefinitionGroupId>(
+        ModularEntityPlacer receiverEntityPlacer = new(
+            new SinglePlacer<GlobalTileTransform, GlobalTileCoordinate, TileVector, TileDirection, GlobalTilePivot,
+                LocalTilePivot, TileAxis, BuildingInstanceModel, BuildingConnector, BuildingConnection>(
+                portalReceiverDefinition,
+                new BuildingPlacementAdapter(),
+                new BuildingAccessorAdapter(),
+                new BuildingMapLayoutRegisterAdapter()),
+            placerData);
+
+        PortalSenderRuleProcessor = new AnyIdUnlockedWithResearchRewards<BuildingDefinitionGroupId>(
+            GameHelper.Core.Research.Progress,
+            PortalSenderGroup.Id,
+            new BuildingResearchLockStatusSolver(),
+            new BuildingRewardIdSolver());
+
+        PortalReceiverRuleProcessor = new AnyIdUnlockedWithResearchRewards<BuildingDefinitionGroupId>(
             GameHelper.Core.Research.Progress,
             PortalSenderGroup.Id,
             new BuildingResearchLockStatusSolver(),
             new BuildingRewardIdSolver());
 
         IPlacementInitiator portalSender = new GamePlacementInitiator(
-            RuleProcessor,
+            PortalSenderRuleProcessor,
             senderEntityPlacer,
             placementRunner);
 
-        PlacementInitiatorId =
-            placementRegistry.RegisterInitiator("PortalSenderPlacementInitiator", portalSender);
-    }
+        IPlacementInitiator portalReceiver = new GamePlacementInitiator(
+            PortalReceiverRuleProcessor,
+            receiverEntityPlacer,
+            placementRunner);
 
+        SenderPlacementInitiatorId =
+            placementRegistry.RegisterInitiator("PortalSenderPlacementInitiator", portalSender);
+        ReceiverPlacementInitiatorId = placementRegistry.RegisterInitiator(
+            "PortalReceiverPlacementInitiator",
+            portalReceiver);
+    }
 
     private static Sprite CreateMockSprite(int width, int height, Color color)
     {
         // Create and fill the texture
-        var texture = new Texture2D(width, height);
+        Texture2D texture = new(width, height);
         var pixels = new Color[width * height];
-        for (var i = 0; i < pixels.Length; i++)
+        for (int i = 0; i < pixels.Length; i++)
         {
             pixels[i] = color;
         }
@@ -274,5 +330,18 @@ public class PortalBuildingsExtender : IPlacementInitiatorsExtender, IToolbarDat
 
         // Create and return the sprite
         return Sprite.Create(texture, new Rect(0, 0, width, height), new Vector2(0.5f, 0.5f));
+    }
+}
+
+public class NoBuildingModules : IBuildingModules
+{
+    public IEnumerable<IHUDSidePanelModuleData> GetInfoModules(IBuildingDefinition definition)
+    {
+        yield break;
+    }
+
+    public IEnumerable<IHUDSidePanelModuleData> GetInfoModules(IMapModel map, BuildingModel building)
+    {
+        yield break;
     }
 }
