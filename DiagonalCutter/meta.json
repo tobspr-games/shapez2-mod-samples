@@ -1,24 +1,20 @@
 {
-  "Version": "0.0.1+build.41",
+  "Version": "0.1.0+build.44",
   "Title": "Diagonal Cutter",
   "Description": "Cuts one of the diagonals of a shape",
   "Author": "tobspr Games",
   "SaveGameCompabilityRange": "*",
   "GameVersionSupportRange": "*",
   "AffectsSaveGames": true,
-  "DisableAchievements": true,
+  "DisablesAchievements": true,
   "Conflicts": [],
   "Assemblies": [
     "DiagonalCutter.dll"
   ],
   "Dependencies": [
     {
-      "ModId": "steam:3542611357",
-      "Version": "<0.1.0"
-    },
-    {
-      "ModId": "local:ShapezUtils",
-      "Version": "<1.0.0"
+      "ModId": "local:ShapezShifter",
+      "Version": "^0.*.*"
     }
   ]
 }
