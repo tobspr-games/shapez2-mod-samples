@@ -1,5 +1,5 @@
 {
-  "Version": "0.1.0+build.44",
+  "Version": "0.2.1-test1",
   "Title": "Diagonal Cutter",
   "Description": "Cuts one of the diagonals of a shape",
   "Author": "tobspr Games",
@@ -14,7 +14,7 @@
   "Dependencies": [
     {
       "ModId": "local:ShapezShifter",
-      "Version": "^0.*.*"
+      "Version": "0.*.*"
     }
   ]
 }

@@ -1,6 +1,6 @@
 ﻿using Core.Factory;
-using ShapezShifter;
-using ShapezShifter.Fluent.Atomic;
+using ShapezShifter.Flow.Atomic;
+using ShapezShifter.Hijack;
 
 internal class DiagonalCutterFactoryBuilder
     : IFactoryBuilder<DiagonalCutterSimulation, DiagonalCutterSimulationState, DiagonalCutterConfiguration>

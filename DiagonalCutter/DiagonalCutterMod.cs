@@ -1,11 +1,10 @@
-﻿using System;
-using System.IO;
-using Core.Localization;
+﻿using Core.Localization;
 using JetBrains.Annotations;
-using ShapezShifter;
-using ShapezShifter.Fluent;
-using ShapezShifter.Fluent.Atomic;
-using ShapezShifter.Fluent.Toolbar;
+using ShapezShifter.Flow;
+using ShapezShifter.Flow.Atomic;
+using ShapezShifter.Flow.Toolbar;
+using ShapezShifter.Kit;
+using ShapezShifter.Textures;
 using UnityEngine;
 using ILogger = Core.Logging.ILogger;
 using OpResult = ShapeOperationDiagonalCut;
@@ -17,8 +16,6 @@ using RendererData = IDiagonalCutterDrawData;
 [UsedImplicitly]
 public class DiagonalCuttersMod : IMod
 {
-    private readonly IDisposable Extender;
-
     public DiagonalCuttersMod(ILogger logger)
     {
         BuildingDefinitionGroupId groupId = new("DiagonalCutterGroup");
@@ -34,10 +31,16 @@ public class DiagonalCuttersMod : IMod
            .AddEntry(titleDescription, TranslationEntry.WithDefault(description))
            .Flush();
 
+        ModFolderLocator modResourcesLocator =
+            ModDirectoryLocator.CreateLocator<DiagonalCuttersMod>().SubLocator("Resources");
+
+        using var assetBundleHelper = AssetBundleHelper.CreateForAssetBundleEmbeddedWithMod<DiagonalCuttersMod>();
+        var material = assetBundleHelper.LoadAsset<Material>("Assets/Materials/PortalEntrance.mat");
+
         IBuildingGroupBuilder diagonalCutterGroup = BuildingGroup.Create(groupId)
            .WithTitle(title.T())
            .WithDescription(description.T())
-           .WithIcon(LoadIcon())
+           .WithIcon(FileTextureLoader.LoadTextureAsSprite(modResourcesLocator.SubPath("DiagonalCutter_Icon.png")))
            .AsNonTransportableBuilding()
            .WithPreferredPlacement(DefaultPreferredPlacementMode.LinePerpendicular)
            .WithDefaultThroughputDisplayHelper();
@@ -50,13 +53,13 @@ public class DiagonalCuttersMod : IMod
         IBuildingBuilder diagonalCutterBuilder = Building.Create(definitionId)
            .WithConnectorData(connectorData)
            .DynamicallyRendering<Renderer, Simulation, RendererData>(new DiagonalCutterDrawData())
-           .WithCopiedStaticDrawData(new BuildingDefinitionId("CutterHalfInternalVariant"))
+           .WithStaticDrawData(CreateDrawData(modResourcesLocator))
            .WithPrediction(new AtomicPredictor<Operation>(new OpResult(4), ResultingShape))
            .WithoutSound()
            .WithoutSimulationConfiguration()
            .WithEfficiencyData(new BuildingEfficiencyData(2.0f, 1));
 
-        Extender = AtomicBuildings.Extend()
+        AtomicBuildings.Extend()
            .AllScenarios()
            .WithBuilding(diagonalCutterBuilder, diagonalCutterGroup)
            .WithDefaultPlacement()
@@ -73,19 +76,29 @@ public class DiagonalCuttersMod : IMod
         }
     }
 
-    public void Dispose()
-    {
-        Extender.Dispose();
-    }
+    public void Dispose() { }
 
-    private static Sprite LoadIcon()
+    private static BuildingDrawData CreateDrawData(ModFolderLocator modResourcesLocator)
     {
-        string basePath = Path.GetDirectoryName(typeof(DiagonalCuttersMod).Assembly.Location);
-        string resourcesPath = Path.Combine(basePath, "Resources", "DiagonalCutter_Icon.png");
-        byte[] data = File.ReadAllBytes(resourcesPath);
+        string baseMeshPath = modResourcesLocator.SubPath("SandboxIslands.fbx");
+        Mesh baseMesh = FileMeshLoader.LoadSingleMeshFromFile(baseMeshPath);
 
-        var texture = new Texture2D(2, 2);
-        texture.LoadImage(data);
-        return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+        string placementHelperMeshPath = modResourcesLocator.SubPath("SandboxIslands.fbx");
+        Mesh placementHelperMesh = FileMeshLoader.LoadSingleMeshFromFile(placementHelperMeshPath);
+
+        LOD6Mesh baseModLod = MeshLod.Create().AddLod0Mesh(baseMesh).BuildLod6Mesh();
+
+        return new BuildingDrawData(
+            renderVoidBelow: false,
+            new ILODMesh[] { baseModLod, baseModLod, baseModLod },
+            baseModLod,
+            baseModLod,
+            baseModLod.LODClose,
+            null,
+            BoundingBoxHelper.CreateBasicCollider(baseMesh),
+            new DiagonalCutterDrawData(),
+            false,
+            null,
+            false);
     }
 }
