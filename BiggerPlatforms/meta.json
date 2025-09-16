@@ -1,0 +1,19 @@
+{
+  "Version": "0.0.1",
+  "Description": "Adds a 5x5 foundation to the game",
+  "Author": "tobspr Games",
+  "SaveGameCompabilityRange": "*",
+  "GameVersionSupportRange": "*",
+  "AffectsSaveGames": true,
+  "DisablesAchievements": false,
+  "Conflicts": [],
+  "Assemblies": [
+    "BiggerFoundations.dll"
+  ],
+  "Dependencies": [
+    {
+      "ModId": "local:ShapezShifter",
+      "Version": "0.*.*"
+    }
+  ]
+}

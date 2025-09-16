@@ -1,0 +1,10 @@
+"workshopitem"
+{
+    "appid" "2162800"
+    "publishedfileid" "0"
+    "contentfolder" "${CONTENT_PATH}"
+    "previewfile" "${PREVIEW_IMG}"
+    "visibility" "0"
+    "title" "Sandbox Islands"
+    "description" "Adds an island producer and island trash for convenience"
+}
