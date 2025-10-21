@@ -1,0 +1,20 @@
+{
+  "Version": "0.0.1",
+  "Description": "Adds sandbox islands to the game",
+  "Author": "tobspr Games",
+  "SaveGameCompabilityRange": "*",
+  "GameVersionSupportRange": "*",
+  "AffectsSaveGames": true,
+  "DisablesAchievements": false,
+  "Conflicts": [],
+  "Assemblies": [
+    "SandboxIslands.dll"
+  ],
+  "Dependencies": [
+    {
+      "ModId": "local:ShapezShifter",
+      "ModTitle": "Shapez Shifter",
+      "Version": "0.*.*"
+    }
+  ]
+}
