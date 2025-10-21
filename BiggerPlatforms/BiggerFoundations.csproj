@@ -120,7 +120,7 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <PublicizerLogFilePath>logs/krafs</PublicizerLogFilePath>
+        <PublicizerLogFilePath>logs/krafs.log</PublicizerLogFilePath>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Krafs.Publicizer" Version="2.3.0">
