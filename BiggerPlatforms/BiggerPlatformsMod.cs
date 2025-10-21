@@ -4,9 +4,11 @@ using System.Linq;
 using Core.Collections.Scoped;
 using Core.Localization;
 using Game.Core.Coordinates;
+using Game.Core.Research;
 using JetBrains.Annotations;
 using ShapezShifter.Flow;
 using ShapezShifter.Flow.Atomic;
+using ShapezShifter.Flow.Research;
 using ShapezShifter.Flow.Toolbar;
 using ShapezShifter.Kit;
 using ShapezShifter.Textures;
@@ -42,7 +44,7 @@ public class BiggerPlatformsMod : IMod
         string descriptionId = "island-layout.Layout_GenericPlatform.description";
         string title = $"Foundation {suffix}";
 
-        TranslationBatch.Begin().AddEntry(titleId, TranslationEntry.WithDefault(title)).Flush();
+        // TranslationBatch.Begin().AddEntry(titleId, TranslationEntry.WithDefault(title)).Flush();
 
         ModFolderLocator modResourcesLocator =
             ModDirectoryLocator.CreateLocator<BiggerPlatformsMod>().SubLocator("Resources");
@@ -74,6 +76,7 @@ public class BiggerPlatformsMod : IMod
         AtomicIslands.Extend()
            .AllScenarios()
            .WithIsland(islandBuilder, islandGroupBuilder)
+           .UnlockedAtMilestone(new ByIdMilestoneSelector(new ResearchUpgradeId("RNIslandBuilding")))
            .WithDefaultPlacement()
            .InToolbar(toolbarEntryLocation)
            .WithoutSimulation()

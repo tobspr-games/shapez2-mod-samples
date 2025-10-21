@@ -8,29 +8,31 @@ using Game.Core.Coordinates;
 using Game.Core.Rendering.MeshGeneration;
 using JetBrains.Annotations;
 using ShapezShifter;
-using ShapezShifter.Buildings;
+using ShapezShifter.Flow;
+using ShapezShifter.Hijack;
+using ShapezShifter.Kit;
 using UnityEngine;
 using ILogger = Core.Logging.ILogger;
 
 [UsedImplicitly]
 public class PortalsMod : IMod
 {
-    private readonly List<ExtenderHandle> ExtenderHandles = new();
+    private readonly List<RewirerHandle> ExtenderHandles = new();
 
     private readonly PortalBuildingsExtender PortalBuildingsExtender;
 
     public PortalsMod(ILogger logger)
     {
         PortalBuildingsExtender = new PortalBuildingsExtender(logger);
-        ExtenderHandle handle = ShapezExtensions.AddExtender(PortalBuildingsExtender);
+        RewirerHandle handle = GameRewirers.AddRewirer(PortalBuildingsExtender);
         ExtenderHandles.Add(handle);
     }
 
     public void Dispose()
     {
-        foreach (ExtenderHandle handle in ExtenderHandles)
+        foreach (RewirerHandle handle in ExtenderHandles)
         {
-            ShapezExtensions.RemoveExtender(handle);
+            GameRewirers.RemoveRewirer(handle);
         }
 
         PortalBuildingsExtender.Dispose();
@@ -39,11 +41,11 @@ public class PortalsMod : IMod
 }
 
 public class PortalBuildingsExtender
-    : IShapeBuildingsPlacementInitiatorsExtender,
-      IToolbarDataExtender,
-      IBuildingsExtender,
-      IBuildingModulesExtender,
-      IGameScenarioExtender,
+    : IShapeBuildingPlacementRewirers,
+      IToolbarDataRewirer,
+      IBuildingsRewirer,
+      IBuildingModulesRewirer,
+      IGameScenarioRewirer,
       IDisposable
 {
     private readonly ILogger Logger;
@@ -96,21 +98,21 @@ public class PortalBuildingsExtender
             return gameBuildings;
         }
 
-        PortalSenderGroup = BuildingHelper.CreateBuildingGroup(
-            PortalSenderGroupId.Id,
-            CreateMockSprite(32, 32, Color.red),
-            new RawText("Portal Sender"),
-            new RawText("Sends a shape through a portal"),
-            false,
-            DefaultPreferredPlacementMode.Single);
+        PortalSenderGroup = BuildingGroup.Create(PortalSenderGroupId)
+           .WithTitle(new RawText("Portal Sender"))
+           .WithDescription(new RawText("Sends a shape through a portal"))
+           .WithIcon(CreateMockSprite(32, 32, Color.red))
+           .AsNonTransportableBuilding()
+           .WithPreferredPlacement(DefaultPreferredPlacementMode.Single)
+           .BuildAndRegister(gameBuildings);
 
-        PortalReceiverGroup = BuildingHelper.CreateBuildingGroup(
-            PortalReceiverGroupId.Id,
-            CreateMockSprite(32, 32, Color.green),
-            new RawText("Portal Receiver"),
-            new RawText("Receives a shape through a portal"),
-            false,
-            DefaultPreferredPlacementMode.Single);
+        PortalReceiverGroup = BuildingGroup.Create(PortalReceiverGroupId)
+           .WithTitle(new RawText("Portal Receiver"))
+           .WithDescription(new RawText("Receives a shape through a portal"))
+           .WithIcon(CreateMockSprite(32, 32, Color.green))
+           .AsNonTransportableBuilding()
+           .WithPreferredPlacement(DefaultPreferredPlacementMode.Single)
+           .BuildAndRegister(gameBuildings);
 
         BuildingItemInput senderInput = new()
         {
@@ -130,7 +132,7 @@ public class PortalBuildingsExtender
             TileDirection = TileDirection.East
         };
 
-        var tiles = new[] { TileVector.Zero };
+        TileVector[] tiles = { TileVector.Zero };
 
         LocalTileBounds tileBounds = LocalTileBounds.From_SLOW_DO_NOT_USE(tiles);
         TileDimensions tileDimensions = tileBounds.Dimensions;
@@ -164,14 +166,8 @@ public class PortalBuildingsExtender
             gameBuildings.BeltPortReceiver);
         PortalReceiverGroup.AddInternalVariant(portalReceiver);
 
-        gameBuildings._All.Add(PortalSenderGroup);
-        gameBuildings._All.Add(PortalReceiverGroup);
-
         gameBuildings._DefinitionsById.Add(PortalSenderId, portalSender);
         gameBuildings._DefinitionsById.Add(PortalReceiverId, portalReceiver);
-
-        gameBuildings._VariantsById.Add(PortalSenderGroupId, PortalSenderGroup);
-        gameBuildings._VariantsById.Add(PortalReceiverGroupId, PortalReceiverGroup);
 
         return gameBuildings;
     }
@@ -186,7 +182,7 @@ public class PortalBuildingsExtender
         // Todo: Add XML-like queries for toolbar elements
         var shapeBuildings = (ParentToolbarElementData)toolbarData.RootToolbarElement.Children[0];
         var transportGroup = (ParentToolbarElementData)shapeBuildings.Children[0];
-        var elements = transportGroup.Children.ToList();
+        List<IToolbarElementData> elements = transportGroup.Children.ToList();
         var belt = (IPresentableToolbarElementData)elements.First();
 
         LazyLocalizedText title = new(new TranslationId(belt.Title.ToString()));
@@ -202,23 +198,17 @@ public class PortalBuildingsExtender
         return toolbarData;
     }
 
-    public void ExtendBuildingInitiators(
-        BuildingInitiatorsParams @params,
-        IPlacementInitiatorIdRegistry placementRegistry)
+    public void ModifyBuildingPlacers(BuildingInitiatorsParams @params, IPlacementInitiatorIdRegistry placementRegistry)
     {
         CreatePlacementInitiator(@params.EntityPlacementRunner, placementRegistry);
     }
 
-    public GameScenario ExtendGameScenario(GameScenario gameScenario)
+    public GameScenario ModifyGameScenario(GameScenario gameScenario)
     {
         gameScenario.Progression.Levels[^1].Rewards = gameScenario.Progression.Levels[^1]
-                                                                  .Rewards.Append(
-                                                                       new ResearchRewardBuildingGroup(
-                                                                           PortalSenderGroupId))
-                                                                  .Append(
-                                                                       new ResearchRewardBuildingGroup(
-                                                                           PortalReceiverGroupId))
-                                                                  .ToList();
+           .Rewards.Append(new ResearchRewardBuildingGroup(PortalSenderGroupId))
+           .Append(new ResearchRewardBuildingGroup(PortalReceiverGroupId))
+           .ToList();
         return gameScenario;
     }
 

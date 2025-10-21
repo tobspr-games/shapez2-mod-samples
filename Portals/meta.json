@@ -14,6 +14,7 @@
   "Dependencies": [
     {
       "ModId": "steam:3542611357",
+      "ModTitle": "Shapez Shifter",
       "Version": "<0.1.0"
     }
   ]

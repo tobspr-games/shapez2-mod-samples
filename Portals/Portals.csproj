@@ -46,6 +46,12 @@
             <HintPath>$(SPZ2_PATH)\Game.Core.Map.Layout.Model.dll</HintPath>
             <Private>False</Private>
         </Reference>
+
+        <Reference Include="Game.Core.Rendering">
+            <HintPath>$(SPZ2_PATH)\Game.Core.Rendering.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+
         <Reference Include="Game.Orchestration">
             <HintPath>$(SPZ2_PATH)\Game.Orchestration.dll</HintPath>
             <Private>False</Private>
