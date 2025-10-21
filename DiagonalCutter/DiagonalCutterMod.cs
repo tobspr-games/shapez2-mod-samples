@@ -1,7 +1,11 @@
-﻿using Core.Localization;
+﻿using System;
+using Core.Collections;
+using Core.Localization;
+using Game.Core.Research;
 using JetBrains.Annotations;
 using ShapezShifter.Flow;
 using ShapezShifter.Flow.Atomic;
+using ShapezShifter.Flow.Research;
 using ShapezShifter.Flow.Toolbar;
 using ShapezShifter.Kit;
 using ShapezShifter.Textures;
@@ -23,29 +27,22 @@ public class DiagonalCuttersMod : IMod
 
         string titleId = "building-variant.cutter-diagonal.title";
         string titleDescription = "building-variant.cutter-diagonal.description";
-        string title = "Diagonal Destroyer";
-        string description = "<gl>Destroys</gl> the <gl>Even Parts</gl> of any shape.";
-
-        TranslationBatch.Begin()
-           .AddEntry(titleId, TranslationEntry.WithDefault(title))
-           .AddEntry(titleDescription, TranslationEntry.WithDefault(description))
-           .Flush();
 
         ModFolderLocator modResourcesLocator =
             ModDirectoryLocator.CreateLocator<DiagonalCuttersMod>().SubLocator("Resources");
 
-        using var assetBundleHelper = AssetBundleHelper.CreateForAssetBundleEmbeddedWithMod<DiagonalCuttersMod>();
-        var material = assetBundleHelper.LoadAsset<Material>("Assets/Materials/PortalEntrance.mat");
+        using var assetBundleHelper =
+            AssetBundleHelper.CreateForAssetBundleEmbeddedWithMod<DiagonalCuttersMod>("Resources/DiagonalCutter");
 
         IBuildingGroupBuilder diagonalCutterGroup = BuildingGroup.Create(groupId)
-           .WithTitle(title.T())
-           .WithDescription(description.T())
+           .WithTitle(titleId.T())
+           .WithDescription(titleDescription.T())
            .WithIcon(FileTextureLoader.LoadTextureAsSprite(modResourcesLocator.SubPath("DiagonalCutter_Icon.png")))
            .AsNonTransportableBuilding()
            .WithPreferredPlacement(DefaultPreferredPlacementMode.LinePerpendicular)
            .WithDefaultThroughputDisplayHelper();
 
-        IBuildingConnectorData connectorData = Connectors.SingleTile()
+        IBuildingConnectorData connectorData = BuildingConnectors.SingleTile()
            .AddShapeInput(ShapeConnectorConfig.DefaultInput())
            .AddShapeOutput(ShapeConnectorConfig.DefaultOutput())
            .Build();
@@ -54,16 +51,21 @@ public class DiagonalCuttersMod : IMod
            .WithConnectorData(connectorData)
            .DynamicallyRendering<Renderer, Simulation, RendererData>(new DiagonalCutterDrawData())
            .WithStaticDrawData(CreateDrawData(modResourcesLocator))
-           .WithPrediction(new AtomicPredictor<Operation>(new OpResult(4), ResultingShape))
+           .WithPrediction(new AtomicBuildingPredictor<Operation>(new OpResult(4), ResultingShape))
            .WithoutSound()
            .WithoutSimulationConfiguration()
            .WithEfficiencyData(new BuildingEfficiencyData(2.0f, 1));
 
+        IPresentableUnlockableSideUpgradeBuilder sideUpgradeBuilder = SideUpgrade.New()
+           .WithPresentationData(CreateSideUpgradePresentationData(titleId, titleDescription))
+           .WithCost(new ResearchCostPoints(new ResearchPointCurrency(50)).AsEnumerable())
+           .WithCustomRequirements(Array.Empty<ResearchMechanicId>(), Array.Empty<ResearchUpgradeId>());
         AtomicBuildings.Extend()
            .AllScenarios()
            .WithBuilding(diagonalCutterBuilder, diagonalCutterGroup)
+           .UnlockedWithNewSideUpgrade(sideUpgradeBuilder)
            .WithDefaultPlacement()
-           .InToolbar(ToolbarElementLocator.Root().ChildAt(0).ChildAt(3).ChildAt(^1).InsertAfter())
+           .InToolbar(ToolbarElementLocator.Root().ChildAt(0).ChildAt(2).ChildAt(^1).InsertAfter())
            .WithSimulation(new DiagonalCutterFactoryBuilder())
            .WithAtomicShapeProcessingModules(BuiltinResearchSpeed.CutterSpeed, 2.0f)
            .Build();
@@ -78,12 +80,24 @@ public class DiagonalCuttersMod : IMod
 
     public void Dispose() { }
 
+    private SideUpgradePresentationData CreateSideUpgradePresentationData(string titleId, string titleDescription)
+    {
+        return new SideUpgradePresentationData(
+            new ResearchUpgradeId("Patience"),
+            null,
+            null,
+            titleId.T(),
+            titleDescription.T(),
+            false,
+            "Buildings");
+    }
+
     private static BuildingDrawData CreateDrawData(ModFolderLocator modResourcesLocator)
     {
-        string baseMeshPath = modResourcesLocator.SubPath("SandboxIslands.fbx");
+        string baseMeshPath = modResourcesLocator.SubPath("DiagonalCutter.fbx");
         Mesh baseMesh = FileMeshLoader.LoadSingleMeshFromFile(baseMeshPath);
 
-        string placementHelperMeshPath = modResourcesLocator.SubPath("SandboxIslands.fbx");
+        string placementHelperMeshPath = modResourcesLocator.SubPath("DiagonalCutter.fbx");
         Mesh placementHelperMesh = FileMeshLoader.LoadSingleMeshFromFile(placementHelperMeshPath);
 
         LOD6Mesh baseModLod = MeshLod.Create().AddLod0Mesh(baseMesh).BuildLod6Mesh();
@@ -94,7 +108,7 @@ public class DiagonalCuttersMod : IMod
             baseModLod,
             baseModLod,
             baseModLod.LODClose,
-            null,
+            new LODEmptyMesh(),
             BoundingBoxHelper.CreateBasicCollider(baseMesh),
             new DiagonalCutterDrawData(),
             false,

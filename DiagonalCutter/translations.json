@@ -1,0 +1,12 @@
+{
+  "en-US":
+  {
+    "building-variant.cutter-diagonal.title": "Diagonal Destroyer",
+    "building-variant.cutter-diagonal.description": "<gl>Destroys</gl> the <gl>Even Parts</gl> of a shape."
+  },
+
+  "pt-BR":
+  {
+    "building-variant.cutter-diagonal.title": "Eliminadora de diagonais"
+  }
+}
