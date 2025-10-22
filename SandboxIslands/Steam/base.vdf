@@ -1,0 +1,10 @@
+"workshopitem"
+{
+    "appid" "2162800"
+    "publishedfileid" "3591205645"
+    "contentfolder" "${CONTENT_PATH}"
+    "previewfile" "${PREVIEW_IMG}"
+    "visibility" "0"
+    "title" "Sandbox Islands"
+    "description" "Adds an island trash for flushing extra fluid"
+}

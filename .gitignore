@@ -32,7 +32,8 @@ _UpgradeReport_Files/
 Thumbs.db
 Desktop.ini
 .DS_Store
-
+krafs.log
+**/logs
 
 .nuget/
 _ReSharper.*

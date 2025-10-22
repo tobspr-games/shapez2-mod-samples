@@ -1,0 +1,37 @@
+ManifestFileVersion: 0
+CRC: 2244179246
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 542d0989b6bdfadc4e04042f2933b199
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: eb513b2d9228c497b0b79ef976796f53
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- Assets/Models/PortalExit.fbx
+- Assets/Materials/PortalEntrance.mat
+- Assets/Icons/PortalIcon.png
+- Assets/Materials/PortalExit.mat
+- Assets/Models/PortalEntrance.fbx
+Dependencies: []
