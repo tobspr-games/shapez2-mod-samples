@@ -12,7 +12,7 @@
   ],
   "Dependencies": [
     {
-      "ModId": "local:ShapezShifter",
+      "ModId": "steam:3542611357",
       "ModTitle": "Shapez Shifter",
       "Version": "0.*.*"
     }

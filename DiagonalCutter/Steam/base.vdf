@@ -5,6 +5,6 @@
     "contentfolder" "${CONTENT_PATH}"
     "previewfile" "${PREVIEW_IMG}"
     "visibility" "0"
-    "title" "DiagonalCutters"
+    "title" "Diagonal Cutters"
     "description" "Adds a diagonal cutting building to the game"
 }
