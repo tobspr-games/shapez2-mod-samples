@@ -34,10 +34,12 @@ public class DiagonalCuttersMod : IMod
         using var assetBundleHelper =
             AssetBundleHelper.CreateForAssetBundleEmbeddedWithMod<DiagonalCuttersMod>("Resources/DiagonalCutter");
 
+        var iconPath = modResourcesLocator.SubPath("DiagonalCutter_Icon.png");
+        
         IBuildingGroupBuilder diagonalCutterGroup = BuildingGroup.Create(groupId)
            .WithTitle(titleId.T())
            .WithDescription(titleDescription.T())
-           .WithIcon(FileTextureLoader.LoadTextureAsSprite(modResourcesLocator.SubPath("DiagonalCutter_Icon.png")))
+           .WithIcon(FileTextureLoader.LoadTextureAsSprite(iconPath, out _))
            .AsNonTransportableBuilding()
            .WithPreferredPlacement(DefaultPreferredPlacementMode.LinePerpendicular)
            .WithDefaultThroughputDisplayHelper();
@@ -96,9 +98,6 @@ public class DiagonalCuttersMod : IMod
     {
         string baseMeshPath = modResourcesLocator.SubPath("DiagonalCutter.fbx");
         Mesh baseMesh = FileMeshLoader.LoadSingleMeshFromFile(baseMeshPath);
-
-        string placementHelperMeshPath = modResourcesLocator.SubPath("DiagonalCutter.fbx");
-        Mesh placementHelperMesh = FileMeshLoader.LoadSingleMeshFromFile(placementHelperMeshPath);
 
         LOD6Mesh baseModLod = MeshLod.Create().AddLod0Mesh(baseMesh).BuildLod6Mesh();
 

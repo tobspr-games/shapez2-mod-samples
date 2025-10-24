@@ -32,21 +32,16 @@ public class SandboxIslandsMod : IMod
 
         string titleId = "FluidTrash.title";
         string descriptionId = "FluidTrash.description";
-        string title = "Fluid Trash";
-        string description = "Disposes large amounts of fluid";
-
-        // TranslationBatch.Begin()
-        //    .AddEntry(titleId, TranslationEntry.WithDefault(title))
-        //    .AddEntry(descriptionId, TranslationEntry.WithDefault(description))
-        //    .Flush();
 
         ModFolderLocator modResourcesLocator =
             ModDirectoryLocator.CreateLocator<SandboxIslandsMod>().SubLocator("Resources");
 
+        string iconPath = modResourcesLocator.SubPath("FluidTrash.png");
+
         IIslandGroupBuilder islandGroupBuilder = IslandGroup.Create(groupId)
            .WithTitle(titleId.T())
            .WithDescription(descriptionId.T())
-           .WithIcon(FileTextureLoader.LoadTextureAsSprite(modResourcesLocator.SubPath("FluidTrash.png")))
+           .WithIcon(FileTextureLoader.LoadTextureAsSprite(iconPath, out _))
            .AsNonTransportableIsland()
            .WithPreferredPlacement(DefaultPreferredPlacementMode.Area);
 
