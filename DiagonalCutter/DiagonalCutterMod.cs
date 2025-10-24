@@ -34,10 +34,12 @@ public class DiagonalCuttersMod : IMod
         using var assetBundleHelper =
             AssetBundleHelper.CreateForAssetBundleEmbeddedWithMod<DiagonalCuttersMod>("Resources/DiagonalCutter");
 
+        var iconPath = modResourcesLocator.SubPath("DiagonalCutter_Icon.png");
+        
         IBuildingGroupBuilder diagonalCutterGroup = BuildingGroup.Create(groupId)
            .WithTitle(titleId.T())
            .WithDescription(titleDescription.T())
-           .WithIcon(FileTextureLoader.LoadTextureAsSprite(modResourcesLocator.SubPath("DiagonalCutter_Icon.png")))
+           .WithIcon(FileTextureLoader.LoadTextureAsSprite(iconPath, out _))
            .AsNonTransportableBuilding()
            .WithPreferredPlacement(DefaultPreferredPlacementMode.LinePerpendicular)
            .WithDefaultThroughputDisplayHelper();

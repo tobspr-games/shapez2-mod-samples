@@ -49,10 +49,12 @@ public class BiggerPlatformsMod : IMod
         ModFolderLocator modResourcesLocator =
             ModDirectoryLocator.CreateLocator<BiggerPlatformsMod>().SubLocator("Resources");
 
+        string icon = modResourcesLocator.SubPath($"Foundation_{suffix}.png");
+
         IIslandGroupBuilder islandGroupBuilder = IslandGroup.Create(groupId)
            .WithTitle(titleId.T())
            .WithDescription(descriptionId.T())
-           .WithIcon(FileTextureLoader.LoadTextureAsSprite(modResourcesLocator.SubPath($"Foundation_{suffix}.png")))
+           .WithIcon(FileTextureLoader.LoadTextureAsSprite(icon, out _))
            .AsNonTransportableIsland()
            .WithPreferredPlacement(DefaultPreferredPlacementMode.Area);
 
