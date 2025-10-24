@@ -42,9 +42,6 @@ public class BiggerPlatformsMod : IMod
 
         string titleId = $"Foundation{suffix}.title";
         string descriptionId = "island-layout.Layout_GenericPlatform.description";
-        string title = $"Foundation {suffix}";
-
-        // TranslationBatch.Begin().AddEntry(titleId, TranslationEntry.WithDefault(title)).Flush();
 
         ModFolderLocator modResourcesLocator =
             ModDirectoryLocator.CreateLocator<BiggerPlatformsMod>().SubLocator("Resources");

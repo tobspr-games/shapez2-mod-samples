@@ -99,9 +99,6 @@ public class DiagonalCuttersMod : IMod
         string baseMeshPath = modResourcesLocator.SubPath("DiagonalCutter.fbx");
         Mesh baseMesh = FileMeshLoader.LoadSingleMeshFromFile(baseMeshPath);
 
-        string placementHelperMeshPath = modResourcesLocator.SubPath("DiagonalCutter.fbx");
-        Mesh placementHelperMesh = FileMeshLoader.LoadSingleMeshFromFile(placementHelperMeshPath);
-
         LOD6Mesh baseModLod = MeshLod.Create().AddLod0Mesh(baseMesh).BuildLod6Mesh();
 
         return new BuildingDrawData(
