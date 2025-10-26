@@ -1,6 +1,8 @@
+The Shapez 2 Example Mods solution contain small sample projects that cover the 101 of modding shapez 2
+
 ### Requirements
 
-- Shapez2 Alpha 9
+- Shapez2 1.0.0
 - [ShapezShifter](https://github.com/tobspr-games/shapez2-modding-api) - MonoMod based Shapez2 base API
 - Visual Studio (recommended) or Rider or VSCode
 
@@ -13,22 +15,37 @@ The projects is configured for very easy installation with Visual Studio and fai
 1. SPZ2_PATH: Pointing to the game folder containing the managed assemblies
 2. SPZ2_PERSISTENT: Should point to Unity's `Application.persistentDataPath`
 
-On Windows, these are automatically set when you play the game. You can also add them manually
+On Windows, these can be set automatically by the game by running the game with the command line argument `--set-modding-env-vars`. You can also add them manually to your environment variables
 
 On Unix, these must be set somehow. My recommendation for MacOS is using the `.zprofile` to export the variables and then opening Visual Studio from the console.
 
 After these variables are set, it is as easy as building the solution and the mods should already be available in the game. The project will automatically link the game references, the ShapezShifter API reference and the MonoMod refs.
 
-### Disclaimer
-
-These mods are only a proof of concept. We plan on creating an extended API and 99% of these will probably change. They lack dependency handling, unloading, packing and much more. These are not guidelines for how mods should be implemented, but rather a proof of concept for cross-platform modding
 
 
+### Diagonal Cutter
 
-### Mods
+The most complete official mod example to date. It adds a new building to the game, a diagonal cutter that destroys the odd parts of a shape. The project uses the ShapezShifter mod and highlights how to use its fluent API to create an [atomic building](https://www.notion.so/tobspr-games/Shapez-2-Modding-Documentation-2543c9e752e080a1a772c6b9ada7e462?source=copy_link#2933c9e752e0800f9a49dc6af5fa4821) while covering how to:
 
-- BusyDev: Skips preload for faster iterations
-- InfiniteIslands: Increase the maximum number of Islands (using reflection)
-- InfiniteLayers: Increase the number of layers from 3 to 100 (by patching)
-- PortalBuilding: Demonstrates how to add a new building to the game. The portal itself is very glitchy, but the core concepts are here. Uses Unity's asset bundles (from a brand new project) to add models, textures, shaders and materials to the game.
-- RainbowStars: Changes stars variety (fast check to determine if the mods were loaded)
+- Add a new building and building group to the current scenario game data
+- Add a new specialized stateful simulation that can cutter the diagonals of a shape
+- Add a new simulation system to the simulation loop that pattern matches for the building and creates the simulation
+- Add a new placer for the building
+- Add a new toolbar entry for the placer
+- Add a new set of modules to be displayed by the HUD when the building is selected
+- Load a custom .FBX model and using it for the static rendering
+- Add new translation entries for the building
+- Add a new dynamic renderer for rendering the building current state
+- Add progression requirements to unlock the building
+
+
+
+### Sandbox Islands
+
+This mod is very similar to the Diagonal Cutter in the sense that it highlights how to add an entity (in this case an island) with simulation. The mod adds a new island to the game for discarding paint conveniently. Similarly to the diagonal cutter it also uses the ShapezShifter mod and demonstrate how to extend the game data, research, simulation systems, placement system, toolbar, localization and rendering
+
+
+
+### Bigger Foundations
+
+This mod example also shows how to add an island, but focusing in the data requirements for creating new foundation platforms  
