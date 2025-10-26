@@ -34,8 +34,8 @@ public class DiagonalCuttersMod : IMod
         using var assetBundleHelper =
             AssetBundleHelper.CreateForAssetBundleEmbeddedWithMod<DiagonalCuttersMod>("Resources/DiagonalCutter");
 
-        var iconPath = modResourcesLocator.SubPath("DiagonalCutter_Icon.png");
-        
+        string iconPath = modResourcesLocator.SubPath("DiagonalCutter_Icon.png");
+
         IBuildingGroupBuilder diagonalCutterGroup = BuildingGroup.Create(groupId)
            .WithTitle(titleId.T())
            .WithDescription(titleDescription.T())

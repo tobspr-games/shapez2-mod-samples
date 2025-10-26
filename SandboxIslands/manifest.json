@@ -2,7 +2,7 @@
   "Version": "0.0.1",
   "Description": "Adds sandbox islands to the game",
   "Author": "tobspr Games",
-  "SaveGameCompabilityRange": "*",
+  "SavedModVersionCompabilityRangeWithSelf": "*",
   "GameVersionSupportRange": "*",
   "AffectsSaveGames": true,
   "DisablesAchievements": false,

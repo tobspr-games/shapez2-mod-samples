@@ -3,7 +3,7 @@
   "Title": "Diagonal Cutter",
   "Description": "Cuts one of the diagonals of a shape",
   "Author": "tobspr Games",
-  "SaveGameCompabilityRange": "^0.3.0",
+  "SavedModVersionCompabilityRangeWithSelf": "0.3.0",
   "GameVersionSupportRange": "*",
   "AffectsSaveGames": true,
   "DisablesAchievements": true,
