@@ -1,3 +1,5 @@
+Complete documentation [here](https://www.notion.so/tobspr-games/Shapez-2-Modding-Documentation-2543c9e752e080a1a772c6b9ada7e462)
+
 The Shapez 2 Example Mods solution contain small sample projects that cover the 101 of modding shapez 2
 
 ### Requirements
@@ -7,6 +9,8 @@ The Shapez 2 Example Mods solution contain small sample projects that cover the 
 - Visual Studio (recommended) or Rider or VSCode
 
 > For MacOS users, patching with either MonoMod, HarmonyX, MelonLoader, tModLoader, BepInEx, require running the game with Rosetta
+
+
 
 ### Shapez Shifter
 
