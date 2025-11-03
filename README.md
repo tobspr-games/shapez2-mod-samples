@@ -8,18 +8,35 @@ The Shapez 2 Example Mods solution contain small sample projects that cover the 
 
 > For MacOS users, patching with either MonoMod, HarmonyX, MelonLoader, tModLoader, BepInEx, require running the game with Rosetta
 
+### Shapez Shifter
+
+For the example mods to compile and execute properly, we need a copy of the Shapez Shifter mod. There are two ways to go about it:
+
+[Steam Workshop](https://steamcommunity.com/app/2162800/workshop/): The mod is available as an item in the Steam Workshop [here](https://steamcommunity.com/sharedfiles/filedetails/?id=3542611357). However, access to the workshop is limited and the access will be gradually granted
+
+Source: You can grab a copy of the mod source code on [Github](https://github.com/tobspr-games/shapez2-shifter) and compile it yourself
+
+
+
 ### Installation
 
-The projects is configured for very easy installation with Visual Studio and fairly straightforward with other IDEs. It only requires two environment variables:
+The projects is configured for very easy installation with Visual Studio and fairly straightforward with other IDEs. It only requires three environment variables:
 
 1. SPZ2_PATH: Pointing to the game folder containing the managed assemblies
 2. SPZ2_PERSISTENT: Should point to Unity's `Application.persistentDataPath`
+3. SPZ2_SHIFTER: Points to the Shapez Shifter mod location
 
 On Windows, these can be set automatically by the game by running the game with the command line argument `--set-modding-env-vars`. You can also add them manually to your environment variables
 
 On Unix, these must be set somehow. My recommendation for MacOS is using the `.zprofile` to export the variables and then opening Visual Studio from the console.
 
-After these variables are set, it is as easy as building the solution and the mods should already be available in the game. The project will automatically link the game references, the ShapezShifter API reference and the MonoMod refs.
+After these variables are set, it is as easy as building the solution and the mods should already be available in the game. The project will automatically link the game references and the ShapezShifter API.
+
+
+
+### Building
+
+If the installation was successful, you should be able to build the example mods 
 
 
 
