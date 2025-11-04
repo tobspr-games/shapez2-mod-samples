@@ -75,12 +75,21 @@ public class BiggerPlatformsMod : IMod
         AtomicIslands.Extend()
            .AllScenarios()
            .WithIsland(islandBuilder, islandGroupBuilder)
-           .UnlockedAtMilestone(new ByIdMilestoneSelector(new ResearchUpgradeId("RNIslandBuilding")))
+           .UnlockedAtMilestone(new ByIdPerScenarioMilestoneSelector(MilestoneSelectorBasedOnMode))
            .WithDefaultPlacement()
            .InToolbar(toolbarEntryLocation)
            .WithoutSimulation()
            .WithoutModules()
            .Build();
+        return;
+
+        ResearchUpgradeId MilestoneSelectorBasedOnMode(string scenario)
+        {
+            string milestoneId = scenario.ToLower().Contains("converter-scenario")
+                ? "RNTier1_Onboarding"
+                : "RNIslandBuilding";
+            return new ResearchUpgradeId(milestoneId);
+        }
     }
 
     private IChunkDrawingContextProvider ChunkDrawingOptions()
