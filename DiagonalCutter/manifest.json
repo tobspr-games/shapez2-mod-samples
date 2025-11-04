@@ -1,5 +1,5 @@
 {
-  "Version": "0.4.0",
+  "Version": "0.4.1",
   "Title": "Diagonal Cutter",
   "Description": "Cuts one of the diagonals of a shape",
   "Author": "tobspr Games",
@@ -15,7 +15,7 @@
     {
       "ModId": "steam:3542611357",
       "ModTitle": "Shapez Shifter",
-      "Version": "0.8.*"
+      "Version": "0.9.*"
     }
   ]
 }
