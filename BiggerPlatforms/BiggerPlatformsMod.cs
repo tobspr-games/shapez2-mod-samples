@@ -55,16 +55,17 @@ public class BiggerPlatformsMod : IMod
            .AsNonTransportableIsland()
            .WithPreferredPlacement(DefaultPreferredPlacementMode.Area);
 
-        ChunkLayoutLookup<ChunkVector, IslandChunkData> layout = FoundationLayout(width, height);
+        var layout = FoundationLayout(width, height);
 
         IIslandBuilder islandBuilder = Island.Create(definitionId)
            .WithLayout(layout)
+           .WithBoundingCollider()
            .WithConnectorData(FoundationConnectors(layout))
            .WithInteraction(flippable: false, canHoldBuildings: true)
            .WithDefaultChunkCost()
            .WithRenderingOptions(ChunkDrawingOptions(), drawPlayingField: true);
 
-        IToolbarElementLocator platformsGroup = ToolbarElementLocator.Root().ChildAt(5);
+        IToolbarElementLocator platformsGroup = ToolbarElementLocator.Root().ChildAt(4);
         IToolbarElementLocator lineFoundations = platformsGroup.ChildAt(4);
         IToolbarElementLocator rectFoundations = platformsGroup.ChildAt(5);
 
@@ -83,11 +84,11 @@ public class BiggerPlatformsMod : IMod
            .Build();
         return;
 
-        ResearchUpgradeId MilestoneSelectorBasedOnMode(string scenario)
+        ResearchUpgradeId MilestoneSelectorBasedOnMode(ScenarioId scenarioId)
         {
-            string milestoneId = scenario.ToLower().Contains("converter-scenario")
-                ? "RNTier1_Onboarding"
-                : "RNIslandBuilding";
+            string milestoneId = scenarioId.Id.ToLower().Contains("converter-regular-scenario")
+                ? "ConverterMilestoneTier_Initial"
+                : "Milestone_Initial";
             return new ResearchUpgradeId(milestoneId);
         }
     }
@@ -105,9 +106,9 @@ public class BiggerPlatformsMod : IMod
 
     private IEnumerable<KeyValuePair<ChunkVector, IslandChunkData>> Chunks(int width, int height)
     {
-        KeyValuePair<ChunkVector, ChunkDirection[]>[] allChunks = ChunksData(width, height).ToArray();
+        var allChunks = ChunksData(width, height).ToArray();
 
-        foreach (KeyValuePair<ChunkVector, ChunkDirection[]> kv in allChunks)
+        foreach (var kv in allChunks)
         {
             yield return new KeyValuePair<ChunkVector, IslandChunkData>(
                 kv.Key,
@@ -126,7 +127,7 @@ public class BiggerPlatformsMod : IMod
         var start = new int2((width - 1) / -2, (height - 1) / -2);
         var end = new int2(width / 2, height / 2);
 
-        using ScopedHashSet<ChunkVector> chunks = ScopedHashSet<ChunkVector>.Get();
+        using var chunks = ScopedHashSet<ChunkVector>.Get();
 
         for (int x = start.x; x <= end.x; x++)
         {
@@ -138,7 +139,7 @@ public class BiggerPlatformsMod : IMod
 
         foreach (ChunkVector chunk in chunks)
         {
-            using ScopedList<ChunkDirection> notchDirections = ScopedList<ChunkDirection>.Get();
+            using var notchDirections = ScopedList<ChunkDirection>.Get();
             ComputeExternalNotches(chunk, chunks, notchDirections);
             yield return new KeyValuePair<ChunkVector, ChunkDirection[]>(chunk, notchDirections.ToArray());
         }

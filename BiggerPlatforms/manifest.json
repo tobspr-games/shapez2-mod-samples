@@ -1,8 +1,8 @@
 {
-  "Version": "0.0.2",
+  "Version": "1.0.0",
   "Description": "Adds a 5x5 foundation to the game",
   "Author": "tobspr Games",
-  "SavedModVersionCompabilityRangeWithSelf": "*",
+  "SavedModVersionCompabilityRangeWithSelf": "<1.1.0",
   "GameVersionSupportRange": "*",
   "AffectsSaveGames": true,
   "DisablesAchievements": false,
@@ -14,7 +14,7 @@
     {
       "ModId": "steam:3542611357",
       "ModTitle": "Shapez Shifter",
-      "Version": "0.*.*"
+      "Version": "1.0.*"
     }
   ]
 }

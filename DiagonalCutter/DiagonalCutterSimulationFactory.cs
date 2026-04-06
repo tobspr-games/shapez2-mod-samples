@@ -4,9 +4,11 @@ public class DiagonalCutterSimulationFactory : IFactory<DiagonalCutterSimulation
 {
     private readonly IDiagonalCutterConfiguration Configuration;
     private readonly ShapeOperationDiagonalCut DiagonalCut;
-    private readonly IShapeIdRegistry ShapeRegistry;
+    private readonly IShapeRegistry ShapeRegistry;
 
-    public DiagonalCutterSimulationFactory(IDiagonalCutterConfiguration configuration, IShapeIdRegistry shapeRegistry,
+    public DiagonalCutterSimulationFactory(
+        IDiagonalCutterConfiguration configuration,
+        IShapeRegistry shapeRegistry,
         ShapeOperationDiagonalCut diagonalCut)
     {
         Configuration = configuration;

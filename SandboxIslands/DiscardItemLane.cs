@@ -1,5 +1,4 @@
 using Game.Core.Simulation;
-using ShapezShifter;
 
 namespace SandboxIslands
 {
@@ -16,8 +15,6 @@ namespace SandboxIslands
         /// Accepted items will be discarded.
         public void HandOverItem(IBeltItem itemToDiscard, Ticks remainingTicks)
         {
-            Debugging.Logger.Info?.Log("Received item");
-
             // don't do anything with the item
         }
     }

@@ -45,10 +45,11 @@ public class SandboxIslandsMod : IMod
            .AsNonTransportableIsland()
            .WithPreferredPlacement(DefaultPreferredPlacementMode.Area);
 
-        ChunkLayoutLookup<ChunkVector, IslandChunkData> layout = FoundationLayout();
+        var layout = FoundationLayout();
 
         IIslandBuilder islandBuilder = Island.Create(definitionId)
            .WithLayout(layout)
+           .WithBoundingCollider()
            .WithConnectorData(FoundationConnectors(layout))
            .WithInteraction(flippable: false, canHoldBuildings: false)
            .WithDefaultChunkCost()

@@ -8,7 +8,7 @@ public class DiagonalCutterSimulationRenderer
     public DiagonalCutterSimulationRenderer(
         IMapModel map,
         IBuildingSoundManager soundManager,
-        IShapeIdRegistry shapeRegistry) : base(map) { }
+        IShapeRegistry shapeRegistry) : base(map) { }
 
     public override void OnDrawDynamic(in Entity entity, FrameDrawOptions options)
     {

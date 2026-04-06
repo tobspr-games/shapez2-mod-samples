@@ -1,9 +1,28 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
-public class ShapeOperationDiagonalCut : ShapeOperation<ShapeDefinition, ShapeDiagonalCutResult>
+public class ShapeOperationDiagonalCut : ShapeOperation<ShapeDefinition, ShapeDiagonalCutResult>, IItemOperation1In1Out
 {
-    public ShapeOperationDiagonalCut(int maxShapeLayers) : base(maxShapeLayers)
+    private readonly int MaxShapeLayers;
+
+    public ShapeOperationDiagonalCut(
+        int maxShapeLayers,
+        [DisallowNull] IShapeRegistry shapeRegistry,
+        [DisallowNull] IShapeIdManager shapeIdManager) : base(shapeRegistry, shapeIdManager)
     {
+        MaxShapeLayers = maxShapeLayers;
+    }
+
+    public bool TryExecute(IItem input, out IItem output1)
+    {
+        if (input is not ShapeItem shapeItem)
+        {
+            output1 = null;
+            return false;
+        }
+        ShapeDiagonalCutResult shapeCutResult = Execute(shapeItem.Definition);
+        output1 = shapeCutResult.LeftSide != null ? ShapeRegistry.GetItem(shapeCutResult.LeftSide.Shape) : (IItem)null;
+        return true;
     }
 
     public override ShapeDiagonalCutResult ExecuteInternal(ShapeDefinition shape)
@@ -16,11 +35,13 @@ public class ShapeOperationDiagonalCut : ShapeOperation<ShapeDefinition, ShapeDi
             firstSide,
             shape.PartCount,
             MaxShapeLayers,
+            ShapeIdManager,
             unfolded.FusedReferences);
         ShapeCollapseResult rightResult = ShapeLogic.Collapse(
             secondSide,
             shape.PartCount,
             MaxShapeLayers,
+            ShapeIdManager,
             unfolded.FusedReferences);
 
         return new ShapeDiagonalCutResult(leftResult, rightResult);

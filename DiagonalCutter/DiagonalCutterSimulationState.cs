@@ -19,8 +19,10 @@ public class DiagonalCutterSimulationState : ISimulationState
         ProcessingLaneState.Sync(visitor);
         OutputLaneState.Sync(visitor);
 
-        ShapeCollapseResult.Sync(visitor, ref CurrentWaste);
-        ShapeCollapseResult.Sync(visitor, ref CurrentCollapseResult);
+        var collapseResultSerializer = visitor.GetSerializer<ShapeCollapseResult>();
+
+        collapseResultSerializer.Sync(ref CurrentWaste);
+        collapseResultSerializer.Sync(ref CurrentCollapseResult);
 
         visitor.SyncBool_1(ref ProducingEmptyShape);
     }

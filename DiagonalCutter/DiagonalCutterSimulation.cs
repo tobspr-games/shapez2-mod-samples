@@ -19,7 +19,7 @@ public class DiagonalCutterSimulation : Simulation<DiagonalCutterSimulationState
     public DiagonalCutterSimulation(
         DiagonalCutterSimulationState simulationState,
         IDiagonalCutterConfiguration cutterConfiguration,
-        IShapeIdRegistry shapeRegistry,
+        IShapeRegistry shapeRegistry,
         ShapeOperationDiagonalCut diagonalCut) : base(simulationState)
     {
         OutputLane = new BeltLane(cutterConfiguration.BeltSpeed, simulationState.OutputLaneState);
@@ -71,7 +71,7 @@ public class DiagonalCutterSimulation : Simulation<DiagonalCutterSimulationState
 
     /// <inheritdoc />
     public void TraverseLanes<TTraverser>(TTraverser traverser)
-        where TTraverser : IBeltLaneTraverser
+        where TTraverser : IItemLaneTraverser
     {
         traverser.Traverse(InputLane);
         traverser.Traverse(ProcessingLane);
@@ -81,7 +81,7 @@ public class DiagonalCutterSimulation : Simulation<DiagonalCutterSimulationState
     /// <inheritdoc />
     public void ClearContent()
     {
-        TraverseLanes(ClearItemsBeltLaneTraverser.Default);
+        TraverseLanes(ClearItemsItemLaneTraverser.Default);
     }
 
     /// <inheritdoc />

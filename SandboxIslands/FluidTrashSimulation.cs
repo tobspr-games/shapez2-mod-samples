@@ -33,6 +33,6 @@ namespace SandboxIslands
         }
 
         public void TraverseLanes<TTraverser>(TTraverser traverser)
-            where TTraverser : IBeltLaneTraverser { }
+            where TTraverser : IItemLaneTraverser { }
     }
 }

@@ -11,8 +11,6 @@ using ShapezShifter.Kit;
 using ShapezShifter.Textures;
 using UnityEngine;
 using ILogger = Core.Logging.ILogger;
-using OpResult = ShapeOperationDiagonalCut;
-using Operation = ShapeDiagonalCutResult;
 using Renderer = DiagonalCutterSimulationRenderer;
 using Simulation = DiagonalCutterSimulation;
 using RendererData = IDiagonalCutterDrawData;
@@ -42,7 +40,7 @@ public class DiagonalCuttersMod : IMod
            .WithIcon(FileTextureLoader.LoadTextureAsSprite(iconPath, out _))
            .AsNonTransportableBuilding()
            .WithPreferredPlacement(DefaultPreferredPlacementMode.LinePerpendicular)
-           .WithDefaultThroughputDisplayHelper();
+           .WithDefaultStructureOverview();
 
         IBuildingConnectorData connectorData = BuildingConnectors.SingleTile()
            .AddShapeInput(ShapeConnectorConfig.DefaultInput())
@@ -53,7 +51,6 @@ public class DiagonalCuttersMod : IMod
            .WithConnectorData(connectorData)
            .DynamicallyRendering<Renderer, Simulation, RendererData>(new DiagonalCutterDrawData())
            .WithStaticDrawData(CreateDrawData(modResourcesLocator))
-           .WithPrediction(new AtomicBuildingPredictor<Operation>(new OpResult(4), ResultingShape))
            .WithoutSound()
            .WithoutSimulationConfiguration()
            .WithEfficiencyData(new BuildingEfficiencyData(2.0f, 1));
@@ -68,16 +65,10 @@ public class DiagonalCuttersMod : IMod
            .UnlockedWithNewSideUpgrade(sideUpgradeBuilder)
            .WithDefaultPlacement()
            .InToolbar(ToolbarElementLocator.Root().ChildAt(0).ChildAt(2).ChildAt(^1).InsertAfter())
-           .WithSimulation(new DiagonalCutterFactoryBuilder())
+           .WithSimulation(new DiagonalCutterFactoryBuilder(), logger)
            .WithAtomicShapeProcessingModules(BuiltinResearchSpeed.CutterSpeed, 2.0f)
+           .WithPrediction(new DiagonalCutterPredictionFactoryBuilder(), logger)
            .Build();
-
-        return;
-
-        ShapeCollapseResult ResultingShape(Operation result)
-        {
-            return result.RightSide;
-        }
     }
 
     public void Dispose() { }
@@ -86,8 +77,8 @@ public class DiagonalCuttersMod : IMod
     {
         return new SideUpgradePresentationData(
             new ResearchUpgradeId("Patience"),
-            null,
-            null,
+            GameImageId.Empty,
+            GameVideoId.Empty,
             titleId.T(),
             titleDescription.T(),
             false,
