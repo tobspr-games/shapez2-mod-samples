@@ -1,6 +1,7 @@
 ﻿using System;
 using Core.Collections;
 using Core.Localization;
+using Game.Core.Content.Buildings;
 using Game.Core.Research;
 using JetBrains.Annotations;
 using ShapezShifter.Flow;
@@ -77,7 +78,7 @@ public class DiagonalCuttersMod : IMod
     {
         return new SideUpgradePresentationData(
             new ResearchUpgradeId("Patience"),
-            GameImageId.Empty,
+            new GameImageId("Placeholder"),
             GameVideoId.Empty,
             titleId.T(),
             titleDescription.T(),

@@ -38,6 +38,11 @@
             <HintPath>$(SPZ2_PATH)\Game.Core.Simulation.dll</HintPath>
             <Private>False</Private>
         </Reference>
+
+        <Reference Include="Game.Core.Content">
+            <HintPath>$(SPZ2_PATH)\Game.Core.Content.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
         <Reference Include="Game.Core.Rendering">
             <HintPath>$(SPZ2_PATH)\Game.Core.Rendering.dll</HintPath>
             <Private>False</Private>

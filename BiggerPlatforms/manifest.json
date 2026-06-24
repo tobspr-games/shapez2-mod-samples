@@ -1,8 +1,8 @@
 {
-  "Version": "1.0.0",
+  "Version": "1.1.0",
   "Description": "Adds a 5x5 foundation to the game",
   "Author": "tobspr Games",
-  "SavedModVersionCompabilityRangeWithSelf": "<1.1.0",
+  "SavedModVersionCompabilityRangeWithSelf": "<1.2.0",
   "GameVersionSupportRange": "*",
   "AffectsSaveGames": true,
   "DisablesAchievements": false,
