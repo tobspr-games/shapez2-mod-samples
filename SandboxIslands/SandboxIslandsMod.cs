@@ -61,7 +61,7 @@ public class SandboxIslandsMod : IMod
            .WithIsland(islandBuilder, islandGroupBuilder)
            .UnlockedAtMilestone(new ByIndexMilestoneSelector(^1))
            .WithDefaultPlacement()
-           .InToolbar(ToolbarElementLocator.Root().ChildAt(5).ChildAt(4).ChildAt(^1).InsertAfter())
+           .InToolbar(ToolbarElementLocator.Root().ChildAt(4).ChildAt(3).ChildAt(^1).InsertAfter())
            .WithSimulation(new FluidTrashFactoryBuilder())
            .WithoutModules()
            .Build();
