@@ -1,9 +1,9 @@
 {
-  "Version": "1.1.0",
+  "Version": "1.2.0",
   "Title": "Diagonal Cutter",
   "Description": "Cuts one of the diagonals of a shape",
   "Author": "tobspr Games",
-  "SavedModVersionCompabilityRangeWithSelf": "<1.2.0",
+  "SavedModVersionCompabilityRangeWithSelf": "<1.3.0",
   "GameVersionSupportRange": "*",
   "AffectsSaveGames": true,
   "DisablesAchievements": true,
@@ -15,7 +15,7 @@
     {
       "ModId": "steam:3542611357",
       "ModTitle": "Shapez Shifter",
-      "Version": "1.0.*"
+      "Version": "^1.2.0"
     }
   ]
 }
