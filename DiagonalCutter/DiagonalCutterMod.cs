@@ -58,7 +58,7 @@ public class DiagonalCuttersMod : IMod
 
         IPresentableUnlockableSideUpgradeBuilder sideUpgradeBuilder = SideUpgrade.New()
            .WithPresentationData(CreateSideUpgradePresentationData(titleId, titleDescription))
-           .WithCost(new ResearchCostPoints(new ResearchPointCurrency(50)).AsEnumerable())
+           .WithCost(new ResearchCostPoints(new ResearchPointCurrency(11)).AsEnumerable())
            .WithCustomRequirements(Array.Empty<ResearchMechanicId>(), Array.Empty<ResearchUpgradeId>());
         AtomicBuildings.Extend()
            .AllScenarios()
